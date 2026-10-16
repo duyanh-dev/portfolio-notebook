@@ -157,48 +157,125 @@
             </div>
           </div>
 
-          <div class="page page--left face back" data-page="4">
-            <div class="page__inner store">
-              <h2 class="title title--sm">Store</h2>
-              <p class="sub">Little things I made</p>
-              <div class="shelf">
-                <article class="product" data-name="Art Print">
-                  <div class="product__pic pic--dusk"></div>
-                  <h3>Art Print</h3><p>A3 &middot; matte</p>
-                  <div class="product__row"><b>$35</b><button type="button" class="mini-btn">Add</button></div>
-                </article>
-                <article class="product" data-name="Preset Pack">
-                  <div class="product__pic pic--city"></div>
-                  <h3>Preset Pack</h3><p>10 presets</p>
-                  <div class="product__row"><b>$19</b><button type="button" class="mini-btn">Add</button></div>
-                </article>
-              </div>
-            </div>
+          <!-- trang 4 : kệ hàng -->
+<div class="page page--left face back" data-page="4">
+  <div class="page__inner shop">
+    <button type="button" class="shop__bag" id="shopBadge" aria-label="Open bag">BAG <b id="shopBadgeN">0</b> &rarr;</button>
+    <h2 class="title title--sm">Store</h2>
+    <p class="sub">Little things I made</p>
+
+    <div class="goods">
+
+      <article class="item" data-name="Preset Pack" data-price="19" style="--ac:#6f7d6c;--r:-.8deg">
+        <small class="item__tag">PHOTO<span> &middot; 10 presets</span></small>
+        <div class="obj">
+          <div class="o-film">
+            <i class="o-film__strip"></i>
+            <i class="o-film__cap"></i>
+            <span class="o-film__body"><span class="o-film__label"><b>PRESETS</b><small>&times;10</small></span></span>
+            <i class="o-film__cap o-film__cap--b"></i>
           </div>
+        </div>
+        <h3>Preset Pack</h3>
+        <div class="item__row"><span class="item__price">$19</span><button type="button" class="item__add"><b>+ ADD</b></button></div>
+      </article>
+
+      <article class="item" data-name="Cut Kit" data-price="22" style="--ac:#66758a;--r:.9deg">
+        <small class="item__tag">VIDEO<span> &middot; 12 LUTs</span></small>
+        <div class="obj">
+          <div class="o-vhs">
+            <span class="o-vhs__label"><b>CUT KIT</b><small>LUT &times;12 &middot; 4K</small></span>
+            <span class="o-vhs__win"><i></i><i></i></span>
+          </div>
+        </div>
+        <h3>Cut Kit</h3>
+        <div class="item__row"><span class="item__price">$22</span><button type="button" class="item__add"><b>+ ADD</b></button></div>
+      </article>
+
+      <article class="item" data-name="Art Print" data-price="35" style="--ac:#8d7560;--r:.6deg">
+        <small class="item__tag">ART<span> &middot; A3 matte</span></small>
+        <div class="obj">
+          <div class="o-frame">
+            <span class="o-frame__mat"><i class="o-frame__sun"></i><i class="o-frame__hill"></i><i class="o-frame__hill o-frame__hill--b"></i></span>
+          </div>
+        </div>
+        <h3>Art Print</h3>
+        <div class="item__row"><span class="item__price">$35</span><button type="button" class="item__add"><b>+ ADD</b></button></div>
+      </article>
+
+      <article class="item" data-name="Zine Vol. 01" data-price="24" style="--ac:#7d6a74;--r:-.7deg">
+        <small class="item__tag">DESIGN<span> &middot; 48 pages</span></small>
+        <div class="obj">
+          <div class="o-zine">
+            <span class="o-zine__in"></span>
+            <span class="o-zine__cover"><b>ZINE</b><em>VOL.01</em></span>
+          </div>
+        </div>
+        <h3>Zine Vol. 01</h3>
+        <div class="item__row"><span class="item__price">$24</span><button type="button" class="item__add"><b>+ ADD</b></button></div>
+      </article>
+
+      <article class="item" data-name="Mixtape 01" data-price="12" style="--ac:#9a5a50;--r:-.5deg">
+        <i class="item__new">NEW</i>
+        <small class="item__tag">MUSIC<span> &middot; 8 tracks</span></small>
+        <div class="obj">
+          <div class="o-tape">
+            <span class="o-tape__label"><b>Mixtape 01</b><small>SIDE A &middot; 60 MIN</small></span>
+            <span class="o-tape__win"><i class="reel"></i><i class="reel"></i></span>
+          </div>
+        </div>
+        <h3>Mixtape 01</h3>
+        <div class="item__row"><span class="item__price">$12</span><button type="button" class="item__add"><b>+ ADD</b></button></div>
+      </article>
+
+      <article class="item" data-name="Sticker Sheet" data-price="8" style="--ac:#a07f38;--r:.8deg">
+        <small class="item__tag">GRAPHIC<span> &middot; 12 stickers</span></small>
+        <div class="obj">
+          <div class="o-stk"><i>&#9733;</i><i>&#9834;</i><i>&#9673;</i><i>&#9786;</i><em></em></div>
+        </div>
+        <h3>Sticker Sheet</h3>
+        <div class="item__row"><span class="item__price">$8</span><button type="button" class="item__add"><b>+ ADD</b></button></div>
+      </article>
+
+    </div>
+  </div>
+</div>
         </div>
 
         <!-- leaf 2 : (5) store right  /  (6) contact left -->
         <div class="leaf" data-leaf="2">
-          <div class="page page--right face front" data-page="5">
-            <div class="page__inner store">
-              <div class="shelf shelf--top">
-                <article class="product" data-name="Zine Vol. 01">
-                  <div class="product__pic pic--street"></div>
-                  <h3>Zine Vol. 01</h3><p>48 pages</p>
-                  <div class="product__row"><b>$24</b><button type="button" class="mini-btn">Add</button></div>
-                </article>
-                <article class="product" data-name="Sticker Sheet">
-                  <div class="product__pic pic--abstract"></div>
-                  <h3>Sticker Sheet</h3><p>12 stickers</p>
-                  <div class="product__row"><b>$8</b><button type="button" class="mini-btn">Add</button></div>
-                </article>
-              </div>
-              <div class="bag">
-                <span>Bag: <b id="bagCount">0</b> items</span>
-                <button type="button" class="mini-btn mini-btn--dark" id="bagBtn">Checkout</button>
-              </div>
-            </div>
-          </div>
+          <!-- trang 5 : máy in hóa đơn -->
+<div class="page page--right face front" data-page="5">
+  <div class="page__inner till">
+    <h2 class="title title--sm">Your Bag</h2>
+    <p class="sub">it prints as you shop</p>
+
+    <div class="printer">
+      <div class="printer__top">
+        <span class="led" id="shopLed"></span>
+        <span class="printer__lcd">ITEMS <b id="shopCount">00</b></span>
+        <button type="button" class="printer__feed" id="shopFeed">FEED</button>
+      </div>
+      <span class="printer__slot"></span>
+    </div>
+
+    <div class="rcp-wrap">
+      <div class="rcp" id="rcp">
+        <div class="rcp__head">&#9733; RETRO SHOP &#9733;<br>YOURNAME STUDIO</div>
+        <div class="rcp__meta"><span id="rcpDate"></span><span id="rcpNo">No.0042</span></div>
+        <div class="rcp__lines" id="rcpLines">
+          <div class="rline rline--empty" id="rcpEmpty">&mdash; bag is empty &mdash;</div>
+        </div>
+        <div class="rcp__total"><span>TOTAL</span><b id="rcpTotal">$0.00</b></div>
+        <div class="rcp__bar"></div>
+        <p class="rcp__thx">THANK YOU! COME AGAIN</p>
+        <span class="rcp__paid">PAID</span>
+      </div>
+    </div>
+
+    <button type="button" class="till__btn" id="shopCheckout">CHECKOUT</button>
+  </div>
+</div>
 
           <div class="page page--left face back" data-page="6">
             <div class="page__inner contact">

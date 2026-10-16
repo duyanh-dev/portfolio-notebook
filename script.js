@@ -923,19 +923,138 @@ var TV_CHANNELS
     wrap.addEventListener('pointercancel', end);
   })();
 
-  /* =====================================================
-     STORE
-     ===================================================== */
-  var bag = 0, bagCount = $('#bagCount');
-  $$('.product .mini-btn').forEach(function (b) {
-    b.addEventListener('click', function () {
-      bag++; bagCount.textContent = bag;
-      toast('Added "' + b.closest('.product').getAttribute('data-name') + '" to your bag');
+/* =====================================================
+   STORE: kệ hàng + máy in hóa đơn
+   ===================================================== */
+(function () {
+  var linesEl = $('#rcpLines');
+  if (!linesEl) return;
+  var rcp = $('#rcp'), totalEl = $('#rcpTotal'), countEl = $('#shopCount'), led = $('#shopLed');
+  var emptyEl = $('#rcpEmpty'), badgeN = $('#shopBadgeN');
+  var cart = {}, order = [], busy = false, orderNo = 42, sctx = null, ledTimer;
+
+  var dt = new Date();
+  $('#rcpDate').textContent = pad(dt.getDate()) + '/' + pad(dt.getMonth() + 1) + '/' + String(dt.getFullYear()).slice(2);
+
+  /* ---- âm thanh máy in ---- */
+  function ac() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
+      sctx = sctx || new AC(); if (sctx.state === 'suspended') sctx.resume();
+      return sctx;
+    } catch (e) { return null; }
+  }
+  function blip(t, f, d, type, v) {
+    var o = sctx.createOscillator(), g = sctx.createGain();
+    o.type = type || 'square'; o.frequency.value = f;
+    g.gain.setValueAtTime(v || .03, t); g.gain.exponentialRampToValueAtTime(.0001, t + d);
+    o.connect(g); g.connect(sctx.destination); o.start(t); o.stop(t + d + .02);
+  }
+  function printSound() { if (!ac()) return; var t = sctx.currentTime; for (var i = 0; i < 7; i++) blip(t + i * .055, 900 + Math.random() * 700, .04); }
+  function dingSound() { if (!ac()) return; var t = sctx.currentTime; blip(t, 1318, .5, 'sine', .08); blip(t + .12, 1760, .7, 'sine', .07); }
+
+  /* chụp lại trang chứa phần tử này khi lật 3D */
+  function dirty(el) {
+    var f = el.closest('.face'), l = f && f.closest('.leaf');
+    if (l && l._dirty) { l._dirty[f.classList.contains('back') ? 'back' : 'front'] = true; refreshVisible(); }
+  }
+
+  function money(n) { return '$' + n.toFixed(2); }
+
+  function totals() {
+    var sum = 0, qty = 0;
+    order.forEach(function (k) { sum += cart[k].price * cart[k].qty; qty += cart[k].qty; });
+    totalEl.textContent = money(sum);
+    countEl.textContent = pad(qty);
+    badgeN.textContent = qty;
+    emptyEl.hidden = order.length > 0;
+    led.classList.add('is-on');
+    clearTimeout(ledTimer); ledTimer = setTimeout(function () { led.classList.remove('is-on'); }, 500);
+    dirty(rcp);
+  }
+
+  function makeRow(it) {
+    var el = document.createElement('div');
+    el.className = 'rline';
+    el.innerHTML = '<span class="rline__q"></span><span class="rline__n"></span><span class="rline__p"></span>' +
+      '<button type="button" class="rline__x" aria-label="Remove">&times;</button>';
+    el.querySelector('.rline__n').textContent = it.name;
+    el.querySelector('.rline__x').addEventListener('click', function () { removeOne(it.name); });
+    it.el = el;
+    linesEl.appendChild(el);
+  }
+
+  function paint(it) {
+    it.el.querySelector('.rline__q').textContent = it.qty + 'x';
+    it.el.querySelector('.rline__p').textContent = money(it.price * it.qty);
+  }
+
+  function addItem(name, price) {
+    var it = cart[name];
+    if (it) {
+      it.qty++;
+      it.el.classList.remove('is-bump'); void it.el.offsetWidth; it.el.classList.add('is-bump');
+    } else {
+      it = cart[name] = { name: name, price: price, qty: 1 };
+      order.push(name);
+      makeRow(it);
+    }
+    paint(it);
+    linesEl.scrollTop = linesEl.scrollHeight;
+    totals(); printSound();
+  }
+
+  function removeOne(name) {
+    var it = cart[name]; if (!it) return;
+    it.qty--;
+    if (it.qty <= 0) {
+      linesEl.removeChild(it.el);
+      delete cart[name];
+      order.splice(order.indexOf(name), 1);
+    } else paint(it);
+    totals();
+  }
+
+  /* ---- nút Add trên từng sản phẩm ---- */
+  $$('.item').forEach(function (el) {
+    var btn = $('.item__add', el), label = $('b', btn), tm, tp;
+    btn.addEventListener('click', function () {
+      if (busy) return;
+      addItem(el.getAttribute('data-name'), parseFloat(el.getAttribute('data-price')));
+      el.classList.add('is-play'); clearTimeout(tp); tp = setTimeout(function () { el.classList.remove('is-play'); }, 1400);
+      btn.classList.add('is-done'); label.textContent = '\u2713 ADDED';
+      clearTimeout(tm); tm = setTimeout(function () { btn.classList.remove('is-done'); label.textContent = '+ ADD'; }, 900);
     });
   });
-  $('#bagBtn').addEventListener('click', function () {
-    toast(bag ? 'This is a demo: connect your own checkout here' : 'Your bag is empty');
+
+  /* ---- FEED: cuộn giấy trắng ---- */
+  $('#shopFeed').addEventListener('click', function () {
+    printSound();
+    rcp.classList.remove('is-feed'); void rcp.offsetWidth; rcp.classList.add('is-feed');
   });
+
+  /* ---- CHECKOUT: đóng dấu PAID rồi xé hóa đơn ---- */
+  $('#shopCheckout').addEventListener('click', function () {
+    if (busy) return;
+    if (!order.length) { toast('Your bag is empty. Press + ADD on something!'); return; }
+    busy = true;
+    dingSound();
+    rcp.classList.add('is-paid'); dirty(rcp);
+    setTimeout(function () { rcp.classList.add('is-tear'); }, 1300);
+    setTimeout(function () {
+      $$('.rline', linesEl).forEach(function (r) { if (r !== emptyEl) linesEl.removeChild(r); });
+      cart = {}; order = [];
+      rcp.classList.remove('is-paid', 'is-tear');
+      orderNo++; $('#rcpNo').textContent = 'No.' + ('000' + orderNo).slice(-4);
+      totals();
+      toast('Demo: connect your own checkout here');
+      busy = false;
+    }, 2300);
+  });
+
+  /* mobile: nút BAG nhảy sang trang hóa đơn */
+  $('#shopBadge').addEventListener('click', function () { if (isMobile()) pageNav(1); });
+})();
 
   /* =====================================================
      ENQUIRY FORM (3 bước + máy đánh chữ)
