@@ -372,10 +372,14 @@
 
     <!-- mobile pager -->
     <div class="pager" id="pager">
-      <button type="button" id="mPrev" aria-label="Previous page">&larr;</button>
-      <span id="mDots" class="pager__dots" aria-hidden="true"></span>
-      <button type="button" id="mNext" aria-label="Next page">&rarr;</button>
-    </div>
+  <button type="button" id="mPrev" aria-label="Previous page">
+    <svg viewBox="0 0 120 60" aria-hidden="true"><path d="M114 32 C86 26 58 28 20 30 M40 10 C28 18 16 24 6 30 C18 38 30 46 42 54"/></svg>
+  </button>
+  <span id="mDots" class="pager__dots" aria-hidden="true"></span>
+  <button type="button" id="mNext" aria-label="Next page">
+    <svg viewBox="0 0 120 60" aria-hidden="true"><path d="M6 32 C34 26 62 28 100 30 M80 10 C92 18 104 24 114 30 C102 38 90 46 78 54"/></svg>
+  </button>
+</div>
   </section>
 
   <!-- ============ WORK NOTEBOOK (portrait / camera) ============ -->
@@ -455,6 +459,345 @@
   </div>
 </section>
 </main>
+
+<!-- =====================================================================
+     HTML RIÊNG CHO MOBILE (SP dọc)
+     - Chỉ được dùng khi: màn hình ≤820px + đang đứng dọc.
+     - Hiện tại để y hệt PC. Sau này chỉ sửa trong <template id="tplMobile">.
+     - GIỮ NGUYÊN các id / class / data-* mà JS dùng (tvCanvas, brandsField, cards,
+       shopCheckout, enquiryForm, data-page, data-leaf, .face.front / .face.back ...).
+     - Phải đủ 8 trang (data-page 0-7) và 3 .leaf.
+     ===================================================================== -->
+<template id="tplMobile">
+
+  <!-- page 0 : hero -->
+  <div class="page page--left page--base-left" data-page="0">
+    <div class="page__inner hero">
+      <h1 class="title">Creative Lead</h1>
+      <p class="tagline">Photo <i>&bull;</i> Video <i>&bull;</i> Graphic Design <i>&bull;</i> Music <i>&bull;</i> Art</p>
+      <div class="polaroids" aria-hidden="true">
+        <figure class="polaroid polaroid--a">
+          <div class="pic">
+            <img src="./assets/img1.jpg" alt="">
+          </div>
+          <img class="polaroid__frame" src="assets/frame.png" alt="" draggable="false">
+        </figure>
+        <figure class="polaroid polaroid--b">
+          <div class="pic">
+            <img src="./assets/img2.jpg" alt="">
+          </div>
+          <img class="polaroid__frame" src="assets/frame.png" alt="" draggable="false">
+        </figure>
+      </div>
+    </div>
+  </div>
+
+  <!-- leaf 0 : (1) about + TV  /  (2) brands -->
+  <div class="leaf" data-leaf="0">
+    <div class="page page--right face front" data-page="1">
+      <div class="page__inner about">
+        <div class="about__text">
+          <p>Hello! I make photos, films and designs, and I love turning rough ideas into something you can actually feel.</p>
+          <p>I like loud ideas, tidy frames and stories that feel real. If a piece moves someone, it has done its job.</p>
+        </div>
+
+        <div class="tv" id="tv">
+          <div class="tv__screen" id="tvScreen">
+            <canvas id="tvCanvas" width="320" height="240"></canvas>
+            <video id="tvVideo" muted loop playsinline preload="none"></video>
+            <div class="tv__scan"></div>
+            <div class="tv__osd" id="tvOsd">CH 1</div>
+          </div>
+
+          <img class="tv__img" src="assets/tv.png" alt="" aria-hidden="true" draggable="false">
+
+          <button type="button" class="knob knob--ch" id="tvDial" aria-label="Change channel">
+            <img src="assets/button2.png" alt="" draggable="false">
+          </button>
+          <button type="button" class="knob knob--pw" id="tvPower" aria-label="TV power">
+            <img src="assets/button1.png" alt="" draggable="false">
+          </button>
+
+          <div class="tv__btns">
+            <button type="button" data-ch="0" class="is-on" aria-label="Channel 1">1</button>
+            <button type="button" data-ch="1" aria-label="Channel 2">2</button>
+            <button type="button" data-ch="2" aria-label="Channel 3">3</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page page--left face back" data-page="2">
+      <div class="page__inner brands" id="brandsPage">
+        <h2 class="title title--sm">Brands I've<br>worked with</h2>
+        <div class="brands__field" id="brandsField"></div>
+        <p class="hint">Pull a card out of the drawer</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- leaf 1 : (3) testimonials  /  (4) store left -->
+  <div class="leaf" data-leaf="1">
+    <div class="page page--right face front" data-page="3">
+      <div class="page__inner testi">
+        <h2 class="title title--sm">Testimonials</h2>
+        <div class="cards" id="cards">
+          <article class="note-card">
+            <div class="note-card__pic pic">
+              <img src="./assets/img-long1.jpg" alt="">
+            </div>
+            <img class="note-card__frame" src="assets/frame-long.png" alt="" draggable="false">
+            <div class="note-card__text">
+              <h3>Alex</h3>
+              <p>“The photos were beyond what I hoped for. Quick, kind and so creative!”</p>
+            </div>
+          </article>
+          <article class="note-card">
+            <div class="note-card__pic pic">
+              <img src="./assets/img-long2.jpg" alt="">
+            </div>
+            <img class="note-card__frame" src="assets/frame-long.png" alt="" draggable="false">
+            <div class="note-card__text">
+              <h3>Sam</h3>
+              <p>“Our launch video felt exactly like us. Everyone keeps asking who made it.”</p>
+            </div>
+          </article>
+          <article class="note-card">
+            <div class="note-card__pic pic">
+              <img src="./assets/img-long3.png" alt="">
+            </div>
+            <img class="note-card__frame" src="assets/frame-long.png" alt="" draggable="false">
+            <div class="note-card__text">
+              <h3>Jo</h3>
+              <p>“Clean branding and a super smooth process from start to finish.”</p>
+            </div>
+          </article>
+        </div>
+        <p class="hint">Drag the cards across</p>
+        <svg class="doodle doodle--a" viewBox="0 0 80 80" aria-hidden="true"><path d="M8 66 C20 30 44 12 72 10" /></svg>
+        <svg class="doodle doodle--b" viewBox="0 0 80 80" aria-hidden="true"><path d="M40 12 C70 10 76 46 46 56 C20 64 14 38 36 30 C54 26 58 46 44 48" /></svg>
+      </div>
+    </div>
+
+    <!-- trang 4 : kệ hàng -->
+    <div class="page page--left face back" data-page="4">
+      <div class="page__inner shop">
+        <button type="button" class="shop__bag" id="shopBadge" aria-label="Open bag">BAG <b id="shopBadgeN">0</b> &rarr;</button>
+        <h2 class="title title--sm">Store</h2>
+        <p class="sub">Little things I made</p>
+
+        <div class="goods">
+
+          <article class="item" data-name="Preset Pack" data-price="19" style="--ac:#6f7d6c;--r:-.8deg">
+            <small class="item__tag">PHOTO<span> &middot; 10 presets</span></small>
+            <div class="obj">
+              <div class="o-film">
+                <i class="o-film__strip"></i>
+                <i class="o-film__cap"></i>
+                <span class="o-film__body"><span class="o-film__label"><b>PRESETS</b><small>&times;10</small></span></span>
+                <i class="o-film__cap o-film__cap--b"></i>
+              </div>
+            </div>
+            <h3>Preset Pack</h3>
+            <div class="item__row"><span class="item__price">$19</span><button type="button" class="item__add"><b>+ ADD</b></button></div>
+          </article>
+
+          <article class="item" data-name="Cut Kit" data-price="22" style="--ac:#66758a;--r:.9deg">
+            <small class="item__tag">VIDEO<span> &middot; 12 LUTs</span></small>
+            <div class="obj">
+              <div class="o-vhs">
+                <span class="o-vhs__label"><b>CUT KIT</b><small>LUT &times;12 &middot; 4K</small></span>
+                <span class="o-vhs__win"><i></i><i></i></span>
+              </div>
+            </div>
+            <h3>Cut Kit</h3>
+            <div class="item__row"><span class="item__price">$22</span><button type="button" class="item__add"><b>+ ADD</b></button></div>
+          </article>
+
+          <article class="item" data-name="Art Print" data-price="35" style="--ac:#8d7560;--r:.6deg">
+            <small class="item__tag">ART<span> &middot; A3 matte</span></small>
+            <div class="obj">
+              <div class="o-frame">
+                <span class="o-frame__mat"><i class="o-frame__sun"></i><i class="o-frame__hill"></i><i class="o-frame__hill o-frame__hill--b"></i></span>
+              </div>
+            </div>
+            <h3>Art Print</h3>
+            <div class="item__row"><span class="item__price">$35</span><button type="button" class="item__add"><b>+ ADD</b></button></div>
+          </article>
+
+          <article class="item" data-name="Zine Vol. 01" data-price="24" style="--ac:#7d6a74;--r:-.7deg">
+            <small class="item__tag">DESIGN<span> &middot; 48 pages</span></small>
+            <div class="obj">
+              <div class="o-zine">
+                <span class="o-zine__in"></span>
+                <span class="o-zine__cover"><b>ZINE</b><em>VOL.01</em></span>
+              </div>
+            </div>
+            <h3>Zine Vol. 01</h3>
+            <div class="item__row"><span class="item__price">$24</span><button type="button" class="item__add"><b>+ ADD</b></button></div>
+          </article>
+
+          <article class="item" data-name="Mixtape 01" data-price="12" style="--ac:#9a5a50;--r:-.5deg">
+            <i class="item__new">NEW</i>
+            <small class="item__tag">MUSIC<span> &middot; 8 tracks</span></small>
+            <div class="obj">
+              <div class="o-tape">
+                <span class="o-tape__label"><b>Mixtape 01</b><small>SIDE A &middot; 60 MIN</small></span>
+                <span class="o-tape__win"><i class="reel"></i><i class="reel"></i></span>
+              </div>
+            </div>
+            <h3>Mixtape 01</h3>
+            <div class="item__row"><span class="item__price">$12</span><button type="button" class="item__add"><b>+ ADD</b></button></div>
+          </article>
+
+          <article class="item" data-name="Sticker Sheet" data-price="8" style="--ac:#a07f38;--r:.8deg">
+            <small class="item__tag">GRAPHIC<span> &middot; 12 stickers</span></small>
+            <div class="obj">
+              <div class="o-stk"><i>&#9733;</i><i>&#9834;</i><i>&#9673;</i><i>&#9786;</i><em></em></div>
+            </div>
+            <h3>Sticker Sheet</h3>
+            <div class="item__row"><span class="item__price">$8</span><button type="button" class="item__add"><b>+ ADD</b></button></div>
+          </article>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- leaf 2 : (5) store right  /  (6) contact -->
+  <div class="leaf" data-leaf="2">
+    <!-- trang 5 : máy in hóa đơn -->
+    <div class="page page--right face front" data-page="5">
+      <div class="page__inner till">
+        <h2 class="title title--sm">Your Bag</h2>
+        <p class="sub">it prints as you shop</p>
+
+        <div class="printer">
+          <div class="printer__top">
+            <span class="led" id="shopLed"></span>
+            <span class="printer__lcd">ITEMS <b id="shopCount">00</b></span>
+            <button type="button" class="printer__feed" id="shopFeed">FEED</button>
+          </div>
+          <span class="printer__slot"></span>
+        </div>
+
+        <div class="rcp-wrap">
+          <div class="rcp" id="rcp">
+            <div class="rcp__head">&#9733; RETRO SHOP &#9733;<br>YOURNAME STUDIO</div>
+            <div class="rcp__meta"><span id="rcpDate"></span><span id="rcpNo">No.0042</span></div>
+            <div class="rcp__lines" id="rcpLines">
+              <div class="rline rline--empty" id="rcpEmpty">&mdash; bag is empty &mdash;</div>
+            </div>
+            <div class="rcp__total"><span>TOTAL</span><b id="rcpTotal">$0.00</b></div>
+            <div class="rcp__bar"></div>
+            <p class="rcp__thx">THANK YOU! COME AGAIN</p>
+            <span class="rcp__paid">PAID</span>
+          </div>
+        </div>
+
+        <button type="button" class="till__btn" id="shopCheckout">CHECKOUT</button>
+      </div>
+    </div>
+
+    <div class="page page--left face back" data-page="6">
+      <div class="page__inner contact">
+        <div class="contact__top">
+          <svg class="phone" viewBox="0 0 80 230" aria-hidden="true">
+            <path class="phone__cord" d="M40 0 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10"/>
+            <g transform="rotate(7 40 150)">
+              <rect x="28" y="96" width="24" height="96" rx="11" fill="#14110f"/>
+              <rect x="14" y="84" width="52" height="30" rx="14" fill="#14110f"/>
+              <rect x="14" y="176" width="52" height="30" rx="14" fill="#14110f"/>
+              <rect x="20" y="88" width="14" height="6" rx="3" fill="#5b5651" opacity=".6"/>
+            </g>
+          </svg>
+          <div class="contact__text">
+            <h2 class="title title--sm">Contact Me</h2>
+            <p>Got an idea? Tell me about the shoot, the film or the design you have in mind and I'll reply with clear info and good energy.</p>
+          </div>
+        </div>
+
+        <div class="contact__card">
+          <span class="gingham" aria-hidden="true"></span>
+          <div class="kraft">
+            <a href="#" class="social" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6"/><circle cx="12" cy="12" r="4.6" fill="none" stroke="#f1e3cf" stroke-width="2"/><circle cx="17.6" cy="6.4" r="1.4" fill="#f1e3cf"/></svg>
+              Instagram
+            </a>
+            <a href="#" class="social" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4"/><text x="12" y="17" text-anchor="middle" font-size="12" font-weight="700" fill="#f1e3cf" font-family="Arial, sans-serif">in</text></svg>
+              LinkedIn
+            </a>
+            <a class="mail" href="mailto:hello@example.com">hello@example.com</a>
+          </div>
+          <span class="seal" aria-hidden="true">&hearts;</span>
+          <svg class="glasses" viewBox="0 0 160 70" aria-hidden="true">
+            <circle cx="45" cy="38" r="26" fill="rgba(255,255,255,.35)" stroke="#111" stroke-width="7"/>
+            <circle cx="115" cy="38" r="26" fill="rgba(255,255,255,.35)" stroke="#111" stroke-width="7"/>
+            <path d="M71 34 q9 -8 18 0" fill="none" stroke="#111" stroke-width="6"/>
+            <path d="M19 32 L4 20 M141 32 L156 20" stroke="#111" stroke-width="6" stroke-linecap="round"/>
+          </svg>
+          <svg class="star" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="stg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f4f6"/><stop offset=".5" stop-color="#8d9097"/><stop offset="1" stop-color="#d8dade"/></linearGradient></defs><path d="M50 4 L62 38 L98 40 L69 62 L80 96 L50 76 L20 96 L31 62 L2 40 L38 38Z" fill="url(#stg)" stroke="#6d7077" stroke-width="2" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- page 7 : enquiry form -->
+  <div class="page page--right page--base-right" data-page="7">
+    <div class="page__inner enquiry">
+      <div class="tw">
+        <img class="tw__img" src="assets/typewriter.png" alt="" draggable="false">
+        <div class="paper" id="paper">
+          <div class="paper__head">Enquiry Form</div>
+          <form id="enquiryForm" novalidate>
+            <div class="step is-active" data-step="1">
+              <label>Name <b>*</b><input name="name" type="text" autocomplete="name" required></label>
+              <label>Email <b>*</b><input name="email" type="email" autocomplete="email" required></label>
+              <button type="button" class="type-btn" id="formNext">Next &rarr;</button>
+            </div>
+            <div class="step" data-step="2">
+              <label>Message <b>*</b><textarea name="message" rows="4" required></textarea></label>
+              <div class="type-row">
+                <button type="button" class="type-btn type-btn--ghost" id="formBack">&larr; Back</button>
+                <button type="submit" class="type-btn">Send &rarr;</button>
+              </div>
+            </div>
+            <div class="step" data-step="3"><p class="typed" id="typed" aria-live="polite"></p></div>
+          </form>
+          <p class="form-error" id="formError" role="alert"></p>
+          <p class="paper__foot">*PLZ fill this form and I will get back to you super soon</p>
+          <p class="paper__sign">YourName</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- gáy sổ + vòng kim loại -->
+  <img class="rings" src="assets/binder-rod1.png" alt="" aria-hidden="true" draggable="false">
+  <img class="ring-1" src="assets/ring1.png" alt="" aria-hidden="true" draggable="false">
+  <img class="ring-2" src="assets/ring1.png" alt="" aria-hidden="true" draggable="false">
+  <img class="ring-3" src="assets/ring1.png" alt="" aria-hidden="true" draggable="false">
+  <img class="ring-4" src="assets/ring1.png" alt="" aria-hidden="true" draggable="false">
+  <img class="ring-5" src="assets/ring1.png" alt="" aria-hidden="true" draggable="false">
+  <img class="ring-6" src="assets/ring1.png" alt="" aria-hidden="true" draggable="false">
+
+</template>
+
+<script>
+/* SP dọc: thay nội dung sổ bằng HTML mobile TRƯỚC khi script.js chạy.
+   Template rỗng thì giữ nguyên HTML PC (an toàn). */
+(function () {
+  var isPortraitPhone = window.matchMedia('(max-width: 820px) and (orientation: portrait)').matches;
+  var tpl = document.getElementById('tplMobile');
+  var sp = document.getElementById('spread');
+  if (isPortraitPhone && tpl && sp && tpl.content.children.length) {
+    sp.innerHTML = '';
+    sp.appendChild(tpl.content.cloneNode(true));
+    document.body.classList.add('is-mobile-html');
+  }
+})();
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>

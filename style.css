@@ -146,11 +146,11 @@ body.view-work .work-wrap{opacity:1;pointer-events:auto;visibility:visible;trans
    binder.png is 590x366 (x2). Paper box in it: x 60..486, y 29..331.
    Rings occupy a 51px strip around the spine (x 253..304); each page is 182.5px wide
    and the leaf pivots on the spine centre (x 279), so a flipped page lands on the other side. */
-/* ===== THAY toàn bộ khối  @media (min-width:821px){ ... }  cũ (phần "DESKTOP") bằng khối này =====
+/* ===== THAY toàn bộ khối  @media (min-width:0px){ ... }  cũ (phần "DESKTOP") bằng khối này =====
    binder.png mới: 1672 x 941
    Giấy trái x 206..835, phải x 835..1458, y 55..867  (tâm gáy x = 835)
    Gáy vàng + vòng: cắt riêng thành assets/binder-rings.png (x 752..918, y 10..905) và đặt LÊN TRÊN các trang */
-@media (min-width:821px){
+@media (min-width:0px){
 
   
   .book{
@@ -1086,83 +1086,20 @@ body.view-work .work-wrap{opacity:1;pointer-events:auto;visibility:visible;trans
    MOBILE : one page at a time
    ========================================================= */
 @media (max-width:820px){
-  :root{
-    --hdr:112px;
-    --u:calc(86vw / 41.75);
-    --fs-body:clamp(15px,4.3vw,19px);
-    --fs-small:clamp(13px,3.6vw,16px);
-    --fs-title:clamp(34px,10vw,48px);
-    --fs-title-sm:clamp(28px,8vw,38px);
-  }
-.rings{display:none}
-
+  :root{--hdr:112px}
   .site-header{flex-wrap:wrap;align-content:center;row-gap:0;padding-left:5vw;padding-right:5vw}
-  .brand{font-size:34px}
+  .brand{font-size:34px;order:1}
   .vinyl{width:46px;height:46px;order:2}
   .vinyl__arm{height:36px;right:-9px;width:5px}
   .main-nav{order:3;width:100%;justify-content:space-between;margin:2px 0 0;gap:0;padding:0 2vw}
   .nav-link{font-size:23px}
-  .brand{order:1}
-
-  .book-wrap,.work-wrap{justify-content:flex-start;padding:10px 0 26px}
   .stage{overflow:hidden}
-  .page--left .page__inner,.page--right .page__inner{padding-left:calc(var(--u)*3.4);padding-right:calc(var(--u)*3.4)}
-  .book{width:94vw;aspect-ratio:auto;padding:4vw 4vw 4vw 5.4vw;border-radius:14px}
-  .book::before{inset:6px;border-width:2px}
-  .spread{position:relative;inset:auto;perspective:none;left:auto;right:auto;top:auto;bottom:auto}
-  .leaf{display:contents}
-  .page,.face{position:relative;inset:auto;width:100%;display:none;transform:none!important;backface-visibility:visible;
-    border-radius:8px;background:var(--paper)!important;box-shadow:inset 6px 0 8px -6px rgba(0,0,0,.18)}
-  .page.is-m-active{display:block;animation:pageIn .5s cubic-bezier(.3,.8,.3,1)}
-  .page.is-m-active.from-left{animation-name:pageInL}
-  .page__inner{position:relative;inset:auto;min-height:calc(var(--u)*54);padding-bottom:calc(var(--u)*2)}
-  
-  .strap,.arrow{display:none}
-  .pager{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:18px}
-  .pager button{width:58px;height:44px;border-radius:99px;background:#1d1d1d;color:#fff;font-size:24px;line-height:1;box-shadow:0 3px 8px rgba(0,0,0,.3)}
-  .pager button[disabled]{opacity:.3}
-  .pager__dots{display:flex;gap:7px}
-  .pager__dots i{width:9px;height:9px;border-radius:50%;background:rgba(0,0,0,.2);transition:all .3s}
-  .pager__dots i.is-on{background:var(--orange);width:22px;border-radius:9px}
 
-  /* pages on mobile get a little more air */
-  .hero{padding-top:calc(var(--u)*6)}
-  .polaroids{width:74%;margin-top:calc(var(--u)*5)}
-  .tv{width:84%}
-  .about{padding-top:calc(var(--u)*4.6)}
-  .brands__field{min-height:calc(var(--u)*34)}
-  .brand-logo{width:calc(var(--u)*11.6)}
-  .cards{width:72%;margin-top:calc(var(--u)*3.4);margin-bottom:calc(var(--u)*3)}
-  .note-card h3{font-size:19px}
-  .note-card p{font-size:15px}
-  .shelf{gap:calc(var(--u)*1.4)}
-  .product{max-width:none}
-  .product h3{font-size:19px}
-  .product__row b{font-size:18px}
-  .contact__card{width:92%;margin-left:0}
-  .social{font-size:14px}
-  .mail{font-size:14px}
-  .enquiry .page__inner{min-height:calc(var(--u)*64)}
-  .tw{position:relative;left:auto;bottom:auto;width:100%;margin:0 auto}
-  .paper{padding:calc(var(--u)*2.2) calc(var(--u)*1.2) calc(var(--u)*.6)}
-  .step label{font-size:18px}
-  .step{gap:7px}
-  .paper__head,.typed{font-size:15px}
-  .type-btn{font-size:14px}
-  .form-error,.paper__foot{font-size:12px}
-  .hint{padding-bottom:calc(var(--u)*2)}
-
-  /* work */
+  /* work (giữ nguyên như cũ) */
+  .work-wrap{justify-content:flex-start;padding:10px 0 26px}
   .wbook{--ww:min(94vw,560px)}
   .cam__note{left:calc(var(--c)*70.5);width:calc(var(--c)*28)}
   .cam__note p{font-size:max(9px,calc(var(--c)*2.3))}
-
-
- .page{-webkit-mask-image:none;mask-image:none}
-}
-@media (max-width:820px) and (min-width:560px){
-  :root{--u:calc(70vw / 41.75)}
-  .book{width:80vw;margin:0 auto}
 }
 
 @keyframes pageIn{from{opacity:0;transform:translateX(40px) rotateY(-14deg)}to{opacity:1;transform:none}}
@@ -1173,7 +1110,7 @@ body.view-work .work-wrap{opacity:1;pointer-events:auto;visibility:visible;trans
 }
 
 .flip-canvas{position:absolute;z-index:100;pointer-events:none}
-@media (max-width:820px){.flip-canvas{display:none}}
+/* @media (max-width:820px){.flip-canvas{display:none}} */
 
 
 /* =========================================================
@@ -1192,7 +1129,7 @@ body.view-work .work-wrap{opacity:1;pointer-events:auto;visibility:visible;trans
 
 /* ---- bỏ gradient: mọi trang giấy 1 màu phẳng ---- */
 .page,.page--left,.page--right{background:var(--paper)}
-@media (min-width:821px){
+@media (min-width:0px){
   .page--left,.page--right{background:var(--paper)}
   .spread::before{background:var(--paper)}   /* dải giấy giữa gáy */
 }
@@ -1211,7 +1148,7 @@ body.view-work .work-wrap{opacity:1;pointer-events:auto;visibility:visible;trans
 /* =========================================================
    BO GÓC NHẸ: chỉ bo 2 góc ngoài, mép gáy giữ vuông
    ========================================================= */
-@media (min-width:821px){
+@media (min-width:0px){
   .page{--pr:calc(var(--u) * .8)}
   .page--left{border-radius:var(--pr) 0 0 var(--pr)}
   .page--right{border-radius:0 var(--pr) var(--pr) 0}
@@ -1220,7 +1157,7 @@ body.view-work .work-wrap{opacity:1;pointer-events:auto;visibility:visible;trans
 .wpage--top{border-radius:var(--wpr) var(--wpr) 0 0}
 .wpage--bottom{border-radius:0 0 var(--wpr) var(--wpr)}
 
-@media (min-width:821px){
+@media (min-width:0px){
   .book{background:none;filter:none}
   .book::before{
     display:block;content:"";position:absolute;inset:0;
@@ -1231,3 +1168,84 @@ body.view-work .work-wrap{opacity:1;pointer-events:auto;visibility:visible;trans
 }
 
 body.is-flipping *,body.is-flipping *::before,body.is-flipping *::after{animation-play-state:paused!important}
+
+/* =========================================================================
+   ██  MOBILE / SP  -  TOÀN BỘ CSS CỦA SP NẰM TỪ ĐÂY TRỞ XUỐNG  ██
+   Có 2 khối:
+     A) SP chung (≤820px, cả dọc lẫn ngang): header thu nhỏ + màn Work
+     B) SP đang đứng dọc (≤820px + portrait): xoay cuốn sổ -90deg
+   Điện thoại nằm ngang dùng đúng layout PC (chỉ có khối A áp dụng).
+   ========================================================================= */
+
+/* ---------- A) SP CHUNG (≤820px) ---------- */
+@media (max-width:820px){
+  :root{--hdr:56px}                         /* header thấp -> sổ được cao hơn */
+  .stage{overflow:hidden}
+
+  /* --- HEADER: 1 hàng, tên trái, nav + đĩa nhạc bên phải --- */
+  .site-header{
+    flex-wrap:nowrap;justify-content:flex-start;align-items:center;
+    padding-left:4vw;padding-right:4vw;
+  }
+  .brand{
+    order:1;font-size:clamp(20px,5.8vw,28px);
+    text-shadow:1px 1px 0 #fff,2px 2px 0 rgba(33,71,176,.25);
+  }
+  .main-nav{
+    order:2;width:auto;padding:0;
+    margin:0 clamp(8px,2.6vw,14px) 0 auto;   /* auto bên trái = đẩy sang phải */
+    gap:clamp(8px,2.6vw,16px);
+  }
+  .nav-link{font-size:clamp(14px,4vw,20px);padding:2px}
+  .scribble{inset:-8px -8px;width:calc(100% + 16px);height:calc(100% + 16px)}
+  .vinyl{order:3;width:34px;height:34px}
+  .vinyl__arm{height:26px;width:4px;right:-7px;top:-6px}
+
+  /* --- WORK (camera) --- */
+  .work-wrap{justify-content:flex-start;padding:10px 0 26px}
+  .wbook{--ww:min(94vw,560px)}
+  .cam__note{left:calc(var(--c)*70.5);width:calc(var(--c)*28)}
+  .cam__note p{font-size:max(9px,calc(var(--c)*2.3))}
+}
+
+/* ---------- B) SP DỌC (≤820px + portrait): SỔ XOAY +90°, NỘI DUNG XOAY NGƯỢC -90° ---------- */
+@media (max-width:820px) and (orientation:portrait){
+  :root{
+    --bw:720px;   /* bề rộng "thiết kế" của sổ. Nhỏ hơn = chữ to hơn nhưng dễ tràn */
+    --cr:.69;     /* tỉ lệ thu nhỏ nội dung sau khi xoay thẳng (≈ rộng trang / cao trang) */
+  }
+
+  /* cuốn sổ: xoay +90°, --mk do JS tính (fitRot) */
+  .book{
+    flex:none;
+    transform:rotate(90deg) scale(var(--mk,.7));
+    transform-origin:50% 50%;
+  }
+
+  /* nội dung từng trang: xoay ngược -90° để chữ đứng thẳng.
+     Dùng selector đơn (không gắn .book) để bản chụp html2canvas
+     của lật 3D cũng nhận cùng quy tắc, nên texture khớp với trang thật. */
+  .page__inner{
+    transform:rotate(-90deg) scale(var(--cr));
+    transform-origin:50% 50%;
+  }
+
+  .cards{touch-action:none}                                     /* kéo thẻ testimonial */
+
+
+    /* --- 2 mũi tên Previous / Next nằm dưới cùng, 2 bên --- */
+  :root{--pg:56px}                                   /* chiều cao vùng mũi tên */
+  .book-wrap{padding-bottom:calc(var(--pg) + env(safe-area-inset-bottom))}  /* đẩy sổ lên trên mũi tên */
+  .arrow{display:none}                               /* tắt mũi tên nằm trên sổ */
+  .pager{
+    display:flex;justify-content:space-between;align-items:center;
+    position:absolute;left:0;right:0;bottom:calc(6px + env(safe-area-inset-bottom));
+    padding:0 6vw;z-index:130;
+  }
+  .pager button{width:92px;height:46px;padding:0;transition:transform .2s,opacity .3s}
+  .pager button svg{display:block;width:100%;height:100%;overflow:visible}
+  .pager button path{fill:none;stroke:#d8232e;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 1px rgba(0,0,0,.4))}
+  .pager button:active{transform:scale(.92)}
+  .pager button[disabled]{opacity:0;pointer-events:none}   /* trang đầu ẩn Prev, trang cuối ẩn Next */
+  .pager__dots{display:none}
+}

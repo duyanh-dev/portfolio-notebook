@@ -49,7 +49,14 @@
   var delay = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
   var body = document.body;
   var mqMobile = window.matchMedia('(max-width: 820px)');
-  var isMobile = function () { return mqMobile.matches; };
+var mqRot = window.matchMedia('(max-width: 820px) and (orientation: portrait)');
+var isMobile = function () { return false; };            // sổ luôn dùng logic lật 3D
+var isNarrow = function () { return mqMobile.matches; };  // chỉ dùng cho màn Work
+var isRot = function () { return mqRot.matches; };
+var _rotWas = mqRot.matches;
+function onRotChange() { if (mqRot.matches !== _rotWas) location.reload(); }
+if (mqRot.addEventListener) mqRot.addEventListener('change', onRotChange);
+else mqRot.addListener(onRotChange);
 
   var toastEl = $('#toast'), toastTimer;
   function toast(msg) {
@@ -96,7 +103,7 @@
   var spreadEl = $('#spread');
   var CURL = { top: .28, bot: -.30, corner: -.60, dur: 1.45 };   // chỉnh độ cong ở đây
   var NX = 36, NY = 22, MARGIN = 60;
-  var DPR = Math.min(window.devicePixelRatio || 1, 1.5);   // hạ xuống 1.25 nếu vẫn thấy khựng
+  var DPR = Math.min(window.devicePixelRatio || 1, isRot() ? 2 : 1.5);
   var G = {}, GL = null, shadowTex = null;
   var refreshTimer = null;
   var quietUntil = 0;   // không chụp texture ngay trước/sau khi lật
@@ -108,6 +115,8 @@
     } catch (e) { return false; }
   }
   var useGL = webglOK();
+  var ROT_GL = false;   // false = SP dọc lật bằng CSS (ổn định). true = thử lại lật cong WebGL
+function glActive() { return useGL && (ROT_GL || !isRot()); }
 
   leaves.forEach(function (l) { l._dirty = { front: false, back: false }; l._p = 0; l._on = false; });
   function anyFlip() { return leaves.some(function (l) { return l._on; }); }
@@ -328,7 +337,8 @@
   }
 
   function capture(leaf, side) {
-    if (!useGL || isMobile()) return Promise.resolve();
+    if (!glActive() || isMobile()) return Promise.resolve();
+
     initGL();
     var fe = leaf.querySelector('.face.' + side);
     if (!fe) return Promise.resolve();
@@ -348,7 +358,7 @@
   }
 
   function prepareAll() {
-    if (!useGL || isMobile()) return;
+    if (!glActive() || isMobile()) return;
     initGL();
     var order = [];
     // ưu tiên 2 mặt đang hiện, rồi tới các mặt còn lại
@@ -373,7 +383,8 @@
   function refreshVisible() {
     clearTimeout(refreshTimer);
     refreshTimer = setTimeout(function () {
-      if (isMobile() || !useGL) return;
+      if (isMobile() || !glActive()) return;
+
       visibleFaces().forEach(function (v) {
         if (v.leaf._dirty[v.side]) enqueue(function () { return capture(v.leaf, v.side); });
       });
@@ -480,7 +491,7 @@
     leaf._token = (leaf._token || 0) + 1;
 
     // chưa sẵn sàng 3D: lật CSS luôn, không chờ
-    if (!useGL || !glReady(leaf)) { cssFlip(leaf, idx, dir, start); return; }
+if (!glActive() || !glReady(leaf)) { cssFlip(leaf, idx, dir, start); return; }
 
     var fl = leaf._fl, o = { p: start };
     fl.group.visible = true;
@@ -523,11 +534,13 @@
     window.addEventListener('resize', function () {
       clearTimeout(rt);
       rt = setTimeout(function () {
-        if (isMobile() || !useGL) return;
-        fitGL();
-        leaves.forEach(function (l) { l._dirty.front = l._dirty.back = true; });
-        prepareAll();
-      }, 400);
+ if (isMobile() || !glActive()) return;
+
+  if (spreadEl.offsetWidth === G.SW && spreadEl.offsetHeight === G.SH) return;   // <-- thêm
+  fitGL();
+  leaves.forEach(function (l) { l._dirty.front = l._dirty.back = true; });
+  prepareAll();
+}, 400);
     });
   })();
 
@@ -601,14 +614,27 @@
   }
 
   /* stage height (cần cho mobile vì 2 view là absolute) */
-  function fitStage() {
-    // thoát sớm trên desktop để không ép trình duyệt tính lại style giữa lúc lật
-    if (!isMobile()) { stage.style.minHeight = ''; return; }
-    var hdr = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hdr')) || 96;
-    var el = view === 'work' ? $('.wbook') : $('#book');
-    var extra = view === 'work' ? el.offsetWidth * 0.2 + 70 : $('#pager').offsetHeight + 70;
-    stage.style.minHeight = Math.max(window.innerHeight, el.offsetHeight + extra + hdr) + 'px';
-  }
+ function fitStage() {
+  if (!isNarrow() || view !== 'work') { stage.style.minHeight = ''; return; }
+  var hdr = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hdr')) || 96;
+  var el = $('.wbook');
+  stage.style.minHeight = Math.max(window.innerHeight, el.offsetHeight + el.offsetWidth * 0.2 + 70 + hdr) + 'px';
+}
+
+function fitRot() {
+  if (!isRot()) return;
+  var BOOK_FILL = 1.08;
+  var EDGE_Y = 6;
+  var b = $('#book'), wrap = $('#bookWrap');
+  var bw = b.offsetWidth, bh = b.offsetHeight;
+  var cs = getComputedStyle(wrap);
+  var availH = wrap.clientHeight - (parseFloat(cs.paddingBottom) || 0) - (parseFloat(cs.paddingTop) || 0) + EDGE_Y;
+  var k = Math.min(availH / bw, (window.innerWidth * BOOK_FILL) / bh);
+  document.documentElement.style.setProperty('--mk', k.toFixed(4));
+}
+window.addEventListener('resize', fitRot);
+window.addEventListener('orientationchange', fitRot);
+window.addEventListener('load', fitRot);
   if ('ResizeObserver' in window) {
     var ro = new ResizeObserver(fitStage);
     ro.observe(bookWrap); ro.observe(workWrap);
@@ -636,20 +662,20 @@
     }
   });
 
-  mqMobile.addEventListener ? mqMobile.addEventListener('change', modeChanged) : mqMobile.addListener(modeChanged);
-  function modeChanged() {
-    if (isMobile()) {
-      leaves.forEach(function (l) { l.style.transform = ''; l.style.visibility = ''; });
-      body.classList.remove('is-flipping');
-      setMobilePage(mPage, 1);
-    } else {
-      spread = clamp(Math.floor(mPage / 2), 0, TOTAL_SPREADS - 1);
-      renderDesktop();
-      pages.forEach(function (p) { p.classList.remove('is-m-active', 'from-left'); });
-      if (useGL) { fitGL(); leaves.forEach(function (l) { l._dirty.front = l._dirty.back = true; }); prepareAll(); }
-    }
-    updateUI();
-  }
+  // mqMobile.addEventListener ? mqMobile.addEventListener('change', modeChanged) : mqMobile.addListener(modeChanged);
+  // function modeChanged() {
+  //   if (isMobile()) {
+  //     leaves.forEach(function (l) { l.style.transform = ''; l.style.visibility = ''; });
+  //     body.classList.remove('is-flipping');
+  //     setMobilePage(mPage, 1);
+  //   } else {
+  //     spread = clamp(Math.floor(mPage / 2), 0, TOTAL_SPREADS - 1);
+  //     renderDesktop();
+  //     pages.forEach(function (p) { p.classList.remove('is-m-active', 'from-left'); });
+  //     if (useGL) { fitGL(); leaves.forEach(function (l) { l._dirty.front = l._dirty.back = true; }); prepareAll(); }
+  //   }
+  //   updateUI();
+  // }
 
   /* =====================================================
      VINYL / MUSIC
@@ -878,6 +904,16 @@ var TV_CHANNELS
   setOpen(0);
 })();
 
+// đổi vector kéo trên màn hình -> hệ trục của sổ (đã xoay 90° + scale)
+function toLocal(sx, sy) {
+  if (!isRot()) return { x: sx, y: sy };
+  var cs = getComputedStyle(document.documentElement);
+  var k  = parseFloat(cs.getPropertyValue('--mk')) || 1;
+  var cr = parseFloat(cs.getPropertyValue('--cr')) || 1;
+  var s = k * cr;
+  return { x: sx / s, y: sy / s };
+}
+
   /* =====================================================
      TESTIMONIALS: kéo thẻ
      ===================================================== */
@@ -904,8 +940,9 @@ var TV_CHANNELS
     });
     wrap.addEventListener('pointermove', function (e) {
       if (!drag || e.pointerId !== drag.id) return;
-      drag.dx = e.clientX - drag.x;
-      var dy = (e.clientY - drag.y) * .25;
+      var v = toLocal(e.clientX - drag.x, e.clientY - drag.y);
+drag.dx = v.x;
+var dy = v.y * .25;
       order[0].style.transform = 'translate(' + drag.dx + 'px,' + dy + 'px) rotate(' + (drag.dx / 14) + 'deg)';
     });
     function end(e) {
@@ -1277,6 +1314,7 @@ var TV_CHANNELS
   (function init() {
     var h = (location.hash || '').replace('#', '');
     measure();
+    fitRot();
     renderDesktop();
     setMobilePage(0, 1);
     if (h === 'work' || h === 'store' || h === 'contact') {
