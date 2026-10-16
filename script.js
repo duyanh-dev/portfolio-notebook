@@ -9,9 +9,9 @@
 
   // Video cho tivi cổ. Điền src (mp4) để dùng video thật, để trống = hiệu ứng tự vẽ.
   var TV_CHANNELS = [
-    { name: 'CH 1', src: '' },
-    { name: 'CH 2', src: '' },
-    { name: 'CH 3', src: '' }
+    { name: 'CH 1', src: 'assets/video/video1.mp4' },
+    { name: 'CH 2', src: 'assets/video/video2.mp4' },
+    { name: 'CH 3', src: 'assets/video/video3.mp4' }
   ];
 
   // Nội dung cho máy ảnh. Mỗi item có thể thêm: src: 'anh.jpg' hoặc 'clip.mp4'
@@ -805,49 +805,78 @@
     if (!tvOn) tvVideo.pause(); else { tvStatic = 6; if (tvScreen.classList.contains('has-video')) tvVideo.play().catch(function () {}); showOsd('CH ' + (tvCh + 1)); }
   });
   requestAnimationFrame(tvLoop);
+setChannel(0);   // nạp kênh đầu (video nếu có src)
 
-  /* =====================================================
-     BRANDS: logos nổi theo con trỏ
-     ===================================================== */
-  (function () {
-    var field = $('#brandsField'), host = $('#brandsPage');
-    var items = $$('.brand-logo', field).map(function (el) {
-      return { el: el, x: 0, y: 0, s: 1, r: 0, depth: parseFloat(el.getAttribute('data-depth')) || 1, baseR: parseFloat((el.style.getPropertyValue('--r') || '0')) || 0 };
+/* =====================================================
+   BRANDS: hộc tủ phiếu (thêm nhãn hàng = thêm 1 dòng)
+   ===================================================== */
+(function () {
+  var BRANDS = [
+    { name: 'Solar Soda',     year: '2025', work: 'Campaign photos & launch film', tags: ['Photo', 'Video'] },
+    { name: 'Kodama Tea',     year: '2025', work: 'Packaging illustration & label set', tags: ['Design'] },
+    { name: 'Wanderlust Air', year: '2024', work: 'Destination stills for a seasonal ad', tags: ['Photo'] },
+    { name: 'Midnight Cinema',year: '2024', work: 'Poster series & title cards', tags: ['Design', 'Edit'] },
+    { name: 'Bubble & Bean',  year: '2023', work: 'Brand identity & menu design', tags: ['Design'] },
+    { name: 'Thread & Tide',  year: '2023', work: 'Lookbook shoot & colour grade', tags: ['Photo', 'Edit'] },
+    { name: 'Paper Lantern',  year: '2022', work: 'Short brand film', tags: ['Video'] }
+  ];
+
+  var field = $('#brandsField');
+  if (!field) return;
+  var stack = document.createElement('div');
+  stack.className = 'bstack';
+  field.appendChild(stack);
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function mono(n) { return n.split(/\s+|&/).filter(Boolean).slice(0, 2).map(function (w) { return w.charAt(0).toUpperCase(); }).join(''); }
+
+  var open = 0;
+  var cards = BRANDS.map(function (b, i) {
+    var el = document.createElement('div');
+    el.className = 'bcard';
+    el.style.setProperty('--i', i);
+    el.style.setProperty('--j', ((i * 37) % 7 - 3) / 12);       // lệch ngang rất nhẹ cho tự nhiên
+    el.style.setProperty('--ac', ['#6f7d6c', '#8d7560', '#66758a', '#8a8479', '#7d6a74', '#6d7b76'][i % 6]);
+    el.innerHTML =
+      '<button type="button" class="bcard__tab" aria-expanded="false">' +
+        '<span class="bcard__mono">' + esc(mono(b.name)) + '</span>' +
+        '<span class="bcard__name">' + esc(b.name) + '</span>' +
+        '<span class="bcard__no">No.' + pad(i + 1) + '</span>' +
+      '</button>' +
+      '<div class="bcard__body">' +
+        '<p class="bcard__work">' + esc(b.work) + '</p>' +
+        '<p class="bcard__tags">' + b.tags.map(function (t) { return '<i>' + esc(t) + '</i>'; }).join('') + '</p>' +
+        '<span class="bcard__stamp">' + esc(b.year) + '</span>' +
+      '</div>';
+    el.querySelector('.bcard__tab').addEventListener('click', function () { setOpen(open === i ? -1 : i); });
+    stack.appendChild(el);
+    return el;
+  });
+
+  function setOpen(n) {
+    open = n;
+    cards.forEach(function (c, i) {
+      c.classList.toggle('is-open', i === n);
+      c.classList.toggle('is-after', n >= 0 && i > n);
+      c.querySelector('.bcard__tab').setAttribute('aria-expanded', i === n);
     });
-    var m = null, running = false;
-    function pos(e) { m = { x: e.clientX, y: e.clientY }; start(); }
-    host.addEventListener('pointermove', pos);
-    host.addEventListener('pointerdown', pos);
-    host.addEventListener('pointerleave', function () { m = null; start(); });
-    host.addEventListener('pointerup', function (e) { if (e.pointerType !== 'mouse') { m = null; start(); } });
-    function start() { if (!running) { running = true; requestAnimationFrame(tick); } }
-    function tick() {
-      var fr = field.getBoundingClientRect(), moved = false;
-      items.forEach(function (it) {
-        var tx = 0, ty = 0, ts = 1, tr = 0, lift = false;
-        if (m && fr.width > 0) {
-          var cx = fr.left + it.el.offsetLeft + it.el.offsetWidth / 2;
-          var cy = fr.top + it.el.offsetTop + it.el.offsetHeight / 2;
-          var dx = m.x - cx, dy = m.y - cy, dist = Math.hypot(dx, dy);
-          var reach = fr.width * .55;
-          var inf = Math.max(0, 1 - dist / reach);
-          var gx = (m.x - (fr.left + fr.width / 2)) / fr.width;
-          var gy = (m.y - (fr.top + fr.height / 2)) / fr.height;
-          tx = gx * 22 * it.depth + dx * .12 * inf * it.depth;
-          ty = gy * 22 * it.depth + dy * .12 * inf * it.depth - 8 * inf;
-          ts = 1 + inf * .2;
-          tr = -it.baseR * inf;
-          lift = inf > .55;
-        }
-        it.x += (tx - it.x) * .14; it.y += (ty - it.y) * .14; it.s += (ts - it.s) * .14; it.r += (tr - it.r) * .14;
-        it.el.style.transform = 'translate3d(' + it.x.toFixed(2) + 'px,' + it.y.toFixed(2) + 'px,0) rotate(' + (it.baseR + it.r).toFixed(2) + 'deg) scale(' + it.s.toFixed(3) + ')';
-        it.el.style.zIndex = lift ? 5 : 1;
-        it.el.classList.toggle('is-lift', lift);
-        if (Math.abs(tx - it.x) + Math.abs(ty - it.y) + Math.abs(ts - it.s) > .01) moved = true;
-      });
-      if (moved || m) requestAnimationFrame(tick); else running = false;
-    }
-  })();
+  }
+var TV_CHANNELS
+  function layout() {
+    var W = field.clientWidth, H = field.clientHeight;
+    if (!W || !H) return;                                        // trang đang display:none (mobile)
+    var body = Math.round(W * .36);
+    var tab = clamp(Math.floor((H - body - 6) / cards.length), 30, Math.round(W * .15));
+    stack.style.setProperty('--tab', tab + 'px');
+    stack.style.setProperty('--body', body + 'px');
+    stack.style.height = (tab * cards.length + body + 6) + 'px'; // quá nhiều thẻ thì field tự cuộn
+  }
+
+  if ('ResizeObserver' in window) new ResizeObserver(layout).observe(field);
+  window.addEventListener('resize', layout);
+  layout();
+  setOpen(0);
+})();
 
   /* =====================================================
      TESTIMONIALS: kéo thẻ
@@ -1140,3 +1169,4 @@
     window.addEventListener('load', fitStage);
   })();
 })();
+
