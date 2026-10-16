@@ -1265,4 +1265,24 @@ body.is-flipping *,body.is-flipping *::before,body.is-flipping *::after{animatio
   .pager button:active{transform:scale(.92)}
   .pager button[disabled]{opacity:0;pointer-events:none}
   .pager__dots{display:none}
+
+    /* --- KHÓA CUỘN: sổ vừa khít đúng 1 màn hình (chỉ ở màn Book) --- */
+  :root{--vh:100%}
+  @supports (height:100dvh){:root{--vh:100dvh}}
+
+  html.lock-book,
+  html.lock-book body{
+    height:100%;
+    overflow:hidden;
+    overscroll-behavior:none;
+  }
+  body.view-book{min-height:0}
+  body.view-book .stage{
+    height:var(--vh);
+    min-height:0 !important;
+  }
+  body.view-book .book-wrap{
+    top:0;bottom:auto;
+    height:var(--vh);
+  }
 }

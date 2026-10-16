@@ -615,7 +615,9 @@ if (!glActive() || !glReady(leaf)) { cssFlip(leaf, idx, dir, start); return; }
 
   /* stage height (cần cho mobile vì 2 view là absolute) */
  function fitStage() {
+document.documentElement.classList.toggle('lock-book', view === 'book' && isRot());   // <-- thêm dòng này
   if (!isNarrow() || view !== 'work') { stage.style.minHeight = ''; return; }
+
   var hdr = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hdr')) || 96;
   var el = $('.wbook');
   stage.style.minHeight = Math.max(window.innerHeight, el.offsetHeight + el.offsetWidth * 0.2 + 70 + hdr) + 'px';
@@ -639,7 +641,8 @@ function fitRot() {
   var k = Math.min(Math.max(kW, kCover), kW * 1.08, kH);
 
   // dời sổ để tâm trang giấy nằm giữa vùng [dưới header, trên mũi tên]
-  var targetY = T + (H - T - B) / 2;
+  var LIFT = 24;   // px muốn đẩy sổ lên. Số càng lớn sổ càng lên cao
+var targetY = T + (H - T - B) / 2 - LIFT;
   var curY = H / 2 + (PAPER_CX - 0.5) * bw * k;
   var mx = -(0.5 - PAPER_CY) * bh * k;
   var my = targetY - curY;
