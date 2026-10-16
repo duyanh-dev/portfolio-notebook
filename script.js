@@ -623,14 +623,31 @@ if (!glActive() || !glReady(leaf)) { cssFlip(leaf, idx, dir, start); return; }
 
 function fitRot() {
   if (!isRot()) return;
-  var BOOK_FILL = 1.08;
-  var EDGE_Y = 6;
-  var b = $('#book'), wrap = $('#bookWrap');
-  var bw = b.offsetWidth, bh = b.offsetHeight;
-  var cs = getComputedStyle(wrap);
-  var availH = wrap.clientHeight - (parseFloat(cs.paddingBottom) || 0) - (parseFloat(cs.paddingTop) || 0) + EDGE_Y;
-  var k = Math.min(availH / bw, (window.innerWidth * BOOK_FILL) / bh);
-  document.documentElement.style.setProperty('--mk', k.toFixed(4));
+  var PAPER_FILL = 0.985;   // trang giấy chiếm bao nhiêu bề ngang màn hình (1 = sát hẳn mép)
+  // vị trí vùng giấy trong ảnh sổ (khớp CSS .spread)
+  var PAPER_W = 0.8629, PAPER_H = 0.7488, PAPER_CX = 0.49761, PAPER_CY = 0.48990;
+
+  var b = $('#book'), wrap = $('#bookWrap'), pg = $('#pager');
+  var bw = b.offsetWidth, bh = b.offsetHeight;      // kích thước layout, chưa bị transform
+  var H = wrap.clientHeight, W = window.innerWidth;
+  var T = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hdr')) || 56; // mép da trên cho header
+  var B = pg.offsetHeight + (parseFloat(getComputedStyle(pg).bottom) || 0) + 6;                  // mép da dưới cho mũi tên
+
+  var kW = W * PAPER_FILL / (bh * PAPER_W);   // zoom để giấy vừa chiều ngang
+  var kCover = H / bw;                        // zoom để sổ phủ kín chiều cao
+  var kH = (H - T - B) / (bw * PAPER_H);      // zoom tối đa để giấy nằm giữa header và mũi tên
+  var k = Math.min(Math.max(kW, kCover), kW * 1.08, kH);
+
+  // dời sổ để tâm trang giấy nằm giữa vùng [dưới header, trên mũi tên]
+  var targetY = T + (H - T - B) / 2;
+  var curY = H / 2 + (PAPER_CX - 0.5) * bw * k;
+  var mx = -(0.5 - PAPER_CY) * bh * k;
+  var my = targetY - curY;
+
+  var st = document.documentElement.style;
+  st.setProperty('--mk', k.toFixed(4));
+  st.setProperty('--mx', mx.toFixed(2) + 'px');
+  st.setProperty('--my', my.toFixed(2) + 'px');
 }
 window.addEventListener('resize', fitRot);
 window.addEventListener('orientationchange', fitRot);
