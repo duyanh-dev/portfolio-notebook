@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>YourName | Creative Lead &amp; Multi-Disciplinary Artist</title>
+  <meta name="description" content="A multi-disciplinary creative working across photo, video and design.">
+  <meta name="theme-color" content="#f8f4e6">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Londrina+Solid:wght@400;900&family=Patrick+Hand&family=Special+Elite&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/binder.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="retro-depth.css">
+</head>
+<body class="view-book">
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <a href="#about" class="brand" data-go="about" aria-label="YourName, home">YOURNAME</a>
+
+  <nav class="main-nav" aria-label="Main navigation">
+    <a href="#about" class="nav-link is-active" data-go="about">About<svg class="scribble" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true"><path pathLength="400" d="M62 5 C24 2 4 15 8 28 C12 42 52 48 86 44 C113 40 119 22 102 12 C88 4 42 1 26 9"/></svg></a>
+    <a href="#work" class="nav-link" data-go="work">Work<svg class="scribble" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true"><path pathLength="400" d="M62 5 C24 2 4 15 8 28 C12 42 52 48 86 44 C113 40 119 22 102 12 C88 4 42 1 26 9"/></svg></a>
+    <a href="#store" class="nav-link" data-go="store">Store<svg class="scribble" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true"><path pathLength="400" d="M62 5 C24 2 4 15 8 28 C12 42 52 48 86 44 C113 40 119 22 102 12 C88 4 42 1 26 9"/></svg></a>
+    <a href="#contact" class="nav-link" data-go="contact">Contact<svg class="scribble" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true"><path pathLength="400" d="M62 5 C24 2 4 15 8 28 C12 42 52 48 86 44 C113 40 119 22 102 12 C88 4 42 1 26 9"/></svg></a>
+  </nav>
+
+  <button class="vinyl" id="vinylBtn" type="button" aria-pressed="false" aria-label="Play music">
+    <span class="vinyl__disc"><span class="vinyl__label"></span></span>
+    <span class="vinyl__arm"></span>
+  </button>
+</header>
+
+<main class="stage" id="stage">
+
+  <!-- ============ NOTEBOOK (landscape) ============ -->
+  <section class="book-wrap" id="bookWrap" aria-label="Portfolio notebook">
+    <div class="book" id="book">
+
+      <div class="spread" id="spread">
+
+        <!-- page 0 : hero -->
+        <div class="page page--left page--base-left" data-page="0">
+          <div class="page__inner hero">
+            <h1 class="title">Creative Lead</h1>
+            <p class="tagline">Photo <i>&bull;</i> Video <i>&bull;</i> Graphic Design <i>&bull;</i> Music <i>&bull;</i> Art</p>
+            <div class="polaroids" aria-hidden="true">
+              <figure class="polaroid polaroid--a"><div class="pic pic--street"></div></figure>
+              <figure class="polaroid polaroid--b"><div class="pic pic--city"></div></figure>
+            </div>
+          </div>
+        </div>
+
+        <!-- leaf 0 : (1) about + TV  /  (2) brands -->
+        <div class="leaf" data-leaf="0">
+          <div class="page page--right face front" data-page="1">
+            <div class="page__inner about">
+              <div class="about__text">
+                <p>Hello! I make photos, films and designs, and I love turning rough ideas into something you can actually feel.</p>
+                <p>I like loud ideas, tidy frames and stories that feel real. If a piece moves someone, it has done its job.</p>
+              </div>
+
+              <div class="tv" id="tv">
+                <div class="tv__body">
+                  <div class="tv__bezel">
+                    <div class="tv__screen" id="tvScreen">
+                      <canvas id="tvCanvas" width="320" height="240"></canvas>
+                      <video id="tvVideo" muted loop playsinline preload="none"></video>
+                      <div class="tv__scan"></div>
+                      <div class="tv__osd" id="tvOsd">CH 1</div>
+                    </div>
+                  </div>
+                  <div class="tv__panel">
+                    <button type="button" class="dial" id="tvDial" aria-label="Change channel"><i></i></button>
+                    <button type="button" class="dial dial--b" id="tvPower" aria-label="TV power"><i></i></button>
+                    <div class="tv__grille" aria-hidden="true"></div>
+                    <div class="tv__btns">
+                      <button type="button" data-ch="0" class="is-on" aria-label="Channel 1">1</button>
+                      <button type="button" data-ch="1" aria-label="Channel 2">2</button>
+                      <button type="button" data-ch="2" aria-label="Channel 3">3</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="tv__legs" aria-hidden="true"><i></i><i></i></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="page page--left face back" data-page="2">
+            <div class="page__inner brands" id="brandsPage">
+              <h2 class="title title--sm">Brands I've<br>worked with</h2>
+              <div class="brands__field" id="brandsField">
+                <div class="brand-logo" data-depth="1.0" style="--x:4%;--y:2%;--r:-5deg"><span class="stamp"><b>PL</b><small>PAPER LANTERN</small></span></div>
+                <div class="brand-logo" data-depth="1.5" style="--x:60%;--y:6%;--r:4deg"><span class="stamp stamp--round"><b>N&amp;P</b><small>NORTH &amp; PINE</small></span></div>
+                <div class="brand-logo" data-depth="0.8" style="--x:32%;--y:34%;--r:3deg"><span class="stamp"><b>SK</b><small>SUNDAY KITCHEN</small></span></div>
+                <div class="brand-logo" data-depth="1.3" style="--x:62%;--y:48%;--r:-4deg"><span class="stamp stamp--round"><b>BO</b><small>BLUE ORBIT</small></span></div>
+                <div class="brand-logo" data-depth="1.1" style="--x:2%;--y:64%;--r:6deg"><span class="stamp"><b>M&amp;M</b><small>MOTH &amp; MOON</small></span></div>
+              </div>
+              <p class="hint">Move your cursor around</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- leaf 1 : (3) testimonials  /  (4) store left -->
+        <div class="leaf" data-leaf="1">
+          <div class="page page--right face front" data-page="3">
+            <div class="page__inner testi">
+              <h2 class="title title--sm">Testimonials</h2>
+              <div class="cards" id="cards">
+                <article class="note-card">
+                  <i class="tape"></i>
+                  <h3>Alex</h3>
+                  <div class="note-card__pic pic--city"></div>
+                  <p>&ldquo;The photos were beyond what I hoped for. Quick, kind and so creative!&rdquo;</p>
+                </article>
+                <article class="note-card">
+                  <i class="tape"></i>
+                  <h3>Sam</h3>
+                  <div class="note-card__pic pic--street"></div>
+                  <p>&ldquo;Our launch video felt exactly like us. Everyone keeps asking who made it.&rdquo;</p>
+                </article>
+                <article class="note-card">
+                  <i class="tape"></i>
+                  <h3>Jo</h3>
+                  <div class="note-card__pic pic--dusk"></div>
+                  <p>&ldquo;Clean branding and a super smooth process from start to finish.&rdquo;</p>
+                </article>
+              </div>
+              <p class="hint">Drag the cards across</p>
+              <svg class="doodle doodle--a" viewBox="0 0 80 80" aria-hidden="true"><path d="M8 66 C20 30 44 12 72 10" /></svg>
+              <svg class="doodle doodle--b" viewBox="0 0 80 80" aria-hidden="true"><path d="M40 12 C70 10 76 46 46 56 C20 64 14 38 36 30 C54 26 58 46 44 48" /></svg>
+            </div>
+          </div>
+
+          <div class="page page--left face back" data-page="4">
+            <div class="page__inner store">
+              <h2 class="title title--sm">Store</h2>
+              <p class="sub">Little things I made</p>
+              <div class="shelf">
+                <article class="product" data-name="Art Print">
+                  <div class="product__pic pic--dusk"></div>
+                  <h3>Art Print</h3><p>A3 &middot; matte</p>
+                  <div class="product__row"><b>$35</b><button type="button" class="mini-btn">Add</button></div>
+                </article>
+                <article class="product" data-name="Preset Pack">
+                  <div class="product__pic pic--city"></div>
+                  <h3>Preset Pack</h3><p>10 presets</p>
+                  <div class="product__row"><b>$19</b><button type="button" class="mini-btn">Add</button></div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- leaf 2 : (5) store right  /  (6) contact left -->
+        <div class="leaf" data-leaf="2">
+          <div class="page page--right face front" data-page="5">
+            <div class="page__inner store">
+              <div class="shelf shelf--top">
+                <article class="product" data-name="Zine Vol. 01">
+                  <div class="product__pic pic--street"></div>
+                  <h3>Zine Vol. 01</h3><p>48 pages</p>
+                  <div class="product__row"><b>$24</b><button type="button" class="mini-btn">Add</button></div>
+                </article>
+                <article class="product" data-name="Sticker Sheet">
+                  <div class="product__pic pic--abstract"></div>
+                  <h3>Sticker Sheet</h3><p>12 stickers</p>
+                  <div class="product__row"><b>$8</b><button type="button" class="mini-btn">Add</button></div>
+                </article>
+              </div>
+              <div class="bag">
+                <span>Bag: <b id="bagCount">0</b> items</span>
+                <button type="button" class="mini-btn mini-btn--dark" id="bagBtn">Checkout</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="page page--left face back" data-page="6">
+            <div class="page__inner contact">
+              <div class="contact__top">
+                <svg class="phone" viewBox="0 0 80 230" aria-hidden="true">
+                  <path class="phone__cord" d="M40 0 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10"/>
+                  <g transform="rotate(7 40 150)">
+                    <rect x="28" y="96" width="24" height="96" rx="11" fill="#14110f"/>
+                    <rect x="14" y="84" width="52" height="30" rx="14" fill="#14110f"/>
+                    <rect x="14" y="176" width="52" height="30" rx="14" fill="#14110f"/>
+                    <rect x="20" y="88" width="14" height="6" rx="3" fill="#5b5651" opacity=".6"/>
+                  </g>
+                </svg>
+                <div class="contact__text">
+                  <h2 class="title title--sm">Contact Me</h2>
+                  <p>Got an idea? Tell me about the shoot, the film or the design you have in mind and I'll reply with clear info and good energy.</p>
+                </div>
+              </div>
+
+              <div class="contact__card">
+                <span class="gingham" aria-hidden="true"></span>
+                <div class="kraft">
+                  <a href="#" class="social" aria-label="Instagram">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6"/><circle cx="12" cy="12" r="4.6" fill="none" stroke="#f1e3cf" stroke-width="2"/><circle cx="17.6" cy="6.4" r="1.4" fill="#f1e3cf"/></svg>
+                    Instagram
+                  </a>
+                  <a href="#" class="social" aria-label="LinkedIn">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4"/><text x="12" y="17" text-anchor="middle" font-size="12" font-weight="700" fill="#f1e3cf" font-family="Arial, sans-serif">in</text></svg>
+                    LinkedIn
+                  </a>
+                  <a class="mail" href="mailto:hello@example.com">hello@example.com</a>
+                </div>
+                <span class="seal" aria-hidden="true">&hearts;</span>
+                <svg class="glasses" viewBox="0 0 160 70" aria-hidden="true">
+                  <circle cx="45" cy="38" r="26" fill="rgba(255,255,255,.35)" stroke="#111" stroke-width="7"/>
+                  <circle cx="115" cy="38" r="26" fill="rgba(255,255,255,.35)" stroke="#111" stroke-width="7"/>
+                  <path d="M71 34 q9 -8 18 0" fill="none" stroke="#111" stroke-width="6"/>
+                  <path d="M19 32 L4 20 M141 32 L156 20" stroke="#111" stroke-width="6" stroke-linecap="round"/>
+                </svg>
+                <svg class="star" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="stg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f4f6"/><stop offset=".5" stop-color="#8d9097"/><stop offset="1" stop-color="#d8dade"/></linearGradient></defs><path d="M50 4 L62 38 L98 40 L69 62 L80 96 L50 76 L20 96 L31 62 L2 40 L38 38Z" fill="url(#stg)" stroke="#6d7077" stroke-width="2" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- page 7 : enquiry form -->
+        <div class="page page--right page--base-right" data-page="7">
+          <div class="page__inner enquiry">
+            <div class="tw">
+              <img class="tw__img" src="assets/typewriter.png" alt="" draggable="false">
+              <div class="paper" id="paper">
+              <div class="paper__head">Enquiry Form</div>
+              <form id="enquiryForm" novalidate>
+                <div class="step is-active" data-step="1">
+                  <label>Name <b>*</b><input name="name" type="text" autocomplete="name" required></label>
+                  <label>Email <b>*</b><input name="email" type="email" autocomplete="email" required></label>
+                  <button type="button" class="type-btn" id="formNext">Next &rarr;</button>
+                </div>
+                <div class="step" data-step="2">
+                  <label>Message <b>*</b><textarea name="message" rows="4" required></textarea></label>
+                  <div class="type-row">
+                    <button type="button" class="type-btn type-btn--ghost" id="formBack">&larr; Back</button>
+                    <button type="submit" class="type-btn">Send &rarr;</button>
+                  </div>
+                </div>
+                <div class="step" data-step="3"><p class="typed" id="typed" aria-live="polite"></p></div>
+              </form>
+              <p class="form-error" id="formError" role="alert"></p>
+              <p class="paper__foot">*PLZ fill this form and I will get back to you super soon</p>
+              <p class="paper__sign">YourName</p>
+            </div>
+            </div>
+          </div>
+        </div>
+
+            <img class="rings" src="assets/binder-rod1.png" alt="" aria-hidden="true" draggable="false">
+            <img class="ring-1" src="assets/ring1.png" alt="" aria-hidden="true" draggable="false">
+            <img class="ring-2" src="assets/ring1.png" alt="" aria-hidden="true" draggable="false">
+            <img class="ring-3" src="assets/ring1.png" alt="" aria-hidden="true" draggable="false">
+            <img class="ring-4" src="assets/ring1.png" alt="" aria-hidden="true" draggable="false">
+            <img class="ring-5" src="assets/ring1.png" alt="" aria-hidden="true" draggable="false">
+            <img class="ring-6" src="assets/ring1.png" alt="" aria-hidden="true" draggable="false">
+            
+      </div>
+
+      <!-- clasp strap + arrows (desktop) -->
+      <button class="arrow arrow--next" id="nextBtn" type="button" aria-label="Next page">
+        <svg viewBox="0 0 120 60"><path d="M6 32 C34 26 62 28 100 30 M80 10 C92 18 104 24 114 30 C102 38 90 46 78 54" /></svg>
+      </button>
+      <button class="arrow arrow--prev" id="prevBtn" type="button" aria-label="Previous page">
+        <svg viewBox="0 0 120 60"><path d="M114 32 C86 26 58 28 20 30 M40 10 C28 18 16 24 6 30 C18 38 30 46 42 54" /></svg>
+      </button>
+    </div>
+
+    <!-- mobile pager -->
+    <div class="pager" id="pager">
+      <button type="button" id="mPrev" aria-label="Previous page">&larr;</button>
+      <span id="mDots" class="pager__dots" aria-hidden="true"></span>
+      <button type="button" id="mNext" aria-label="Next page">&rarr;</button>
+    </div>
+  </section>
+
+  <!-- ============ WORK NOTEBOOK (portrait / camera) ============ -->
+  <section class="work-wrap" id="workWrap" aria-label="Work" aria-hidden="true">
+  <div class="wbook">
+    <div class="wbook__bg"><img src="assets/binder.png" alt="" aria-hidden="true" draggable="false"></div>
+
+    <div class="wspread">
+      <!-- trang trên: mục lục -->
+      <div class="wpage wpage--top">
+        <div class="windex">
+          <h2 class="wtitle">Work</h2>
+          <p class="wsub">Pick a drawer, then play with the camera</p>
+          <ul class="wtabs" role="tablist" aria-label="Work categories">
+            <li><button type="button" role="tab" data-cat="photo" class="is-active">Photo</button></li>
+            <li><button type="button" role="tab" data-cat="video">Video</button></li>
+            <li><button type="button" role="tab" data-cat="editing">Editing</button></li>
+            <li><button type="button" role="tab" data-cat="design">Design</button></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- trang dưới: máy ảnh -->
+      <div class="wpage wpage--bottom">
+        <!-- GIỮ NGUYÊN toàn bộ <div class="camera" id="camera"> ... </div> cũ -->
+      </div>
+    </div>
+
+    <div class="wbook__rings"><img src="assets/binder-rings.png" alt="" aria-hidden="true" draggable="false"></div>
+  </div>
+</section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
