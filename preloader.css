@@ -1,0 +1,37 @@
+html.is-loading,html.is-loading body{overflow:hidden}
+.pre{
+  position:fixed;inset:0;z-index:9999;display:grid;place-items:center;
+  font-family:"Special Elite","Courier New",monospace;color:#f6f3ea;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+}
+.pre__bars i{position:absolute;top:0;bottom:0;width:20.5%;background:#2147b0}
+.pre__bars i:nth-child(1){left:0}
+.pre__bars i:nth-child(2){left:20%}
+.pre__bars i:nth-child(3){left:40%}
+.pre__bars i:nth-child(4){left:60%}
+.pre__bars i:nth-child(5){left:80%}
+
+.pre__center{position:relative;display:flex;flex-direction:column;align-items:center;width:min(78vw,420px)}
+.pre__cass{display:block;width:100%;height:auto;overflow:visible}
+.pre__cass text{font-family:"Caveat Brush","Comic Sans MS",cursive}
+.pre__cass .t-small{font-family:"Special Elite","Courier New",monospace}
+
+.pre__count{
+  display:flex;align-items:baseline;gap:.08em;margin-top:clamp(18px,4vh,34px);
+  font-family:"Londrina Solid","Arial Black",Impact,sans-serif;font-weight:900;
+  font-size:clamp(64px,18vw,118px);line-height:1;color:#f6f3ea;
+  text-shadow:4px 4px 0 #e8892f;
+}
+.pre__count span{font-size:.4em}
+.pre__msg{margin-top:10px;font-size:clamp(12px,3.4vw,15px);letter-spacing:.14em;text-transform:uppercase;min-height:1.4em;text-align:center}
+.pre__key{
+  margin-top:clamp(14px,3vh,24px);padding:.55em 1.8em;border-radius:99px;
+  background:#f6f3ea;color:#2147b0;font-size:14px;letter-spacing:.22em;
+  box-shadow:0 4px 0 #e8892f;opacity:.3;
+}
+.pre__tag{position:absolute;z-index:2;font-size:11px;letter-spacing:.22em;text-transform:uppercase;opacity:.8}
+.pre__tag--tl{left:max(18px,4vw);top:calc(18px + env(safe-area-inset-top));display:flex;align-items:center;gap:8px}
+.pre__tag--tl em{width:9px;height:9px;border-radius:50%;background:#e8892f}
+.pre__tag--tr{right:max(18px,4vw);top:calc(18px + env(safe-area-inset-top))}
+.pre__tag--bl{left:max(18px,4vw);bottom:calc(18px + env(safe-area-inset-bottom))}
+.pre__tag--br{right:max(18px,4vw);bottom:calc(18px + env(safe-area-inset-bottom))}

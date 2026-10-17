@@ -12,10 +12,48 @@
   <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Londrina+Solid:wght@400;900&family=Patrick+Hand&family=Special+Elite&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/binder.png">
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="retro-depth.css">
+  <link rel="stylesheet" href="preloader.css">
+  <script>document.documentElement.classList.add('is-loading')</script>
+
 </head>
 <body class="view-book">
+<div id="pre" class="pre" role="status" aria-live="polite" aria-label="Loading">
+  <div class="pre__bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 
+  <span class="pre__tag pre__tag--tl"><em id="preDot"></em>REC</span>
+  <span class="pre__tag pre__tag--tr">Side A</span>
+  <span class="pre__tag pre__tag--bl">YourName Studio</span>
+  <span class="pre__tag pre__tag--br">Tape No.01</span>
+
+  <div class="pre__center">
+    <svg class="pre__cass" id="preCass" viewBox="-4 -4 416 276" aria-hidden="true">
+      <rect x="8" y="10" width="400" height="260" rx="20" fill="#14203f" opacity=".35"/>
+      <rect x="0" y="0" width="400" height="260" rx="20" fill="#e9dcc0"/>
+      <rect x="26" y="22" width="348" height="150" rx="8" fill="#f6f0e0"/>
+      <path d="M34 22h332a8 8 0 0 1 8 8v18H26V30a8 8 0 0 1 8-8z" fill="#c4202a"/>
+      <text x="200" y="80" text-anchor="middle" font-size="30" fill="#3a1f1f">Mixtape 01</text>
+      <text class="t-small" x="200" y="96" text-anchor="middle" font-size="10" letter-spacing="2.5" fill="#3a1f1f" opacity=".7">SIDE A · LOADING</text>
+      <rect x="84" y="104" width="232" height="58" rx="29" fill="#2a2724"/>
+      <circle id="rollL" cx="125" cy="133" r="25" fill="#7a4b32"/>
+      <circle id="rollR" cx="275" cy="133" r="13" fill="#7a4b32"/>
+      <polygon id="tape" points="125,158 275,146 275,148 125,160" fill="#7a4b32"/>
+      <g class="reel" data-o="125 133"><circle cx="125" cy="133" r="12" fill="#f6f0e0"/><circle cx="125" cy="133" r="4" fill="#2a2724"/></g>
+      <g class="reel" data-o="275 133"><circle cx="275" cy="133" r="12" fill="#f6f0e0"/><circle cx="275" cy="133" r="4" fill="#2a2724"/></g>
+      <path d="M72 260L96 188H304L328 260Z" fill="#d6c8a6"/>
+      <circle cx="140" cy="226" r="7" fill="#2a2724"/>
+      <circle cx="260" cy="226" r="7" fill="#2a2724"/>
+      <rect x="180" y="219" width="40" height="14" rx="7" fill="#2a2724"/>
+      <circle cx="14" cy="14" r="5" fill="#3a1f1f" opacity=".55"/>
+      <circle cx="386" cy="14" r="5" fill="#3a1f1f" opacity=".55"/>
+      <circle cx="14" cy="246" r="5" fill="#3a1f1f" opacity=".55"/>
+      <circle cx="386" cy="246" r="5" fill="#3a1f1f" opacity=".55"/>
+    </svg>
+
+    <div class="pre__count" id="preCount"><b id="preNum">0</b><span>%</span></div>
+    <p class="pre__msg" id="preMsg">Winding the tape…</p>
+    <div class="pre__key" id="preKey">&#9654; PLAY</div>
+  </div>
+</div>
 <!-- ============ HEADER ============ -->
 <header class="site-header">
   <a href="#about" class="brand" data-go="about" aria-label="YourName, home">YOURNAME</a>
@@ -280,15 +318,7 @@
           <div class="page page--left face back" data-page="6">
             <div class="page__inner contact">
               <div class="contact__top">
-                <svg class="phone" viewBox="0 0 80 230" aria-hidden="true">
-                  <path class="phone__cord" d="M40 0 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10"/>
-                  <g transform="rotate(7 40 150)">
-                    <rect x="28" y="96" width="24" height="96" rx="11" fill="#14110f"/>
-                    <rect x="14" y="84" width="52" height="30" rx="14" fill="#14110f"/>
-                    <rect x="14" y="176" width="52" height="30" rx="14" fill="#14110f"/>
-                    <rect x="20" y="88" width="14" height="6" rx="3" fill="#5b5651" opacity=".6"/>
-                  </g>
-                </svg>
+                <img class="phone" src="assets/phone.png" alt="" aria-hidden="true" draggable="false">
                 <div class="contact__text">
                   <h2 class="title title--sm">Contact Me</h2>
                   <p>Got an idea? Tell me about the shoot, the film or the design you have in mind and I'll reply with clear info and good energy.</p>
@@ -296,27 +326,19 @@
               </div>
 
               <div class="contact__card">
-                <span class="gingham" aria-hidden="true"></span>
-                <div class="kraft">
-                  <a href="#" class="social" aria-label="Instagram">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6"/><circle cx="12" cy="12" r="4.6" fill="none" stroke="#f1e3cf" stroke-width="2"/><circle cx="17.6" cy="6.4" r="1.4" fill="#f1e3cf"/></svg>
-                    Instagram
-                  </a>
-                  <a href="#" class="social" aria-label="LinkedIn">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4"/><text x="12" y="17" text-anchor="middle" font-size="12" font-weight="700" fill="#f1e3cf" font-family="Arial, sans-serif">in</text></svg>
-                    LinkedIn
-                  </a>
-                  <a class="mail" href="mailto:hello@example.com">hello@example.com</a>
-                </div>
-                <span class="seal" aria-hidden="true">&hearts;</span>
-                <svg class="glasses" viewBox="0 0 160 70" aria-hidden="true">
-                  <circle cx="45" cy="38" r="26" fill="rgba(255,255,255,.35)" stroke="#111" stroke-width="7"/>
-                  <circle cx="115" cy="38" r="26" fill="rgba(255,255,255,.35)" stroke="#111" stroke-width="7"/>
-                  <path d="M71 34 q9 -8 18 0" fill="none" stroke="#111" stroke-width="6"/>
-                  <path d="M19 32 L4 20 M141 32 L156 20" stroke="#111" stroke-width="6" stroke-linecap="round"/>
-                </svg>
-                <svg class="star" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="stg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f4f6"/><stop offset=".5" stop-color="#8d9097"/><stop offset="1" stop-color="#d8dade"/></linearGradient></defs><path d="M50 4 L62 38 L98 40 L69 62 L80 96 L50 76 L20 96 L31 62 L2 40 L38 38Z" fill="url(#stg)" stroke="#6d7077" stroke-width="2" stroke-linejoin="round"/></svg>
-              </div>
+  <img class="contact__img" src="assets/card.png" alt="" aria-hidden="true" draggable="false">
+  <div class="contact__links">
+    <a href="#" class="social" aria-label="Instagram">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6"/><circle cx="12" cy="12" r="4.6" fill="none" stroke="#f1e3cf" stroke-width="2"/><circle cx="17.6" cy="6.4" r="1.4" fill="#f1e3cf"/></svg>
+      Instagram
+    </a>
+    <a href="#" class="social" aria-label="LinkedIn">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4"/><text x="12" y="17" text-anchor="middle" font-size="12" font-weight="700" fill="#f1e3cf" font-family="Arial, sans-serif">in</text></svg>
+      LinkedIn
+    </a>
+    <a class="mail" href="mailto:hello@example.com">hello@example.com</a>
+  </div>
+</div>
             </div>
           </div>
         </div>
@@ -703,15 +725,7 @@
     <div class="page page--left face back" data-page="6">
       <div class="page__inner contact">
         <div class="contact__top">
-          <svg class="phone" viewBox="0 0 80 230" aria-hidden="true">
-            <path class="phone__cord" d="M40 0 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10 q16 5 0 10 q-16 5 0 10"/>
-            <g transform="rotate(7 40 150)">
-              <rect x="28" y="96" width="24" height="96" rx="11" fill="#14110f"/>
-              <rect x="14" y="84" width="52" height="30" rx="14" fill="#14110f"/>
-              <rect x="14" y="176" width="52" height="30" rx="14" fill="#14110f"/>
-              <rect x="20" y="88" width="14" height="6" rx="3" fill="#5b5651" opacity=".6"/>
-            </g>
-          </svg>
+          <img class="phone" src="assets/phone.png" alt="" aria-hidden="true" draggable="false">
           <div class="contact__text">
             <h2 class="title title--sm">Contact Me</h2>
             <p>Got an idea? Tell me about the shoot, the film or the design you have in mind and I'll reply with clear info and good energy.</p>
@@ -719,27 +733,19 @@
         </div>
 
         <div class="contact__card">
-          <span class="gingham" aria-hidden="true"></span>
-          <div class="kraft">
-            <a href="#" class="social" aria-label="Instagram">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6"/><circle cx="12" cy="12" r="4.6" fill="none" stroke="#f1e3cf" stroke-width="2"/><circle cx="17.6" cy="6.4" r="1.4" fill="#f1e3cf"/></svg>
-              Instagram
-            </a>
-            <a href="#" class="social" aria-label="LinkedIn">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4"/><text x="12" y="17" text-anchor="middle" font-size="12" font-weight="700" fill="#f1e3cf" font-family="Arial, sans-serif">in</text></svg>
-              LinkedIn
-            </a>
-            <a class="mail" href="mailto:hello@example.com">hello@example.com</a>
-          </div>
-          <span class="seal" aria-hidden="true">&hearts;</span>
-          <svg class="glasses" viewBox="0 0 160 70" aria-hidden="true">
-            <circle cx="45" cy="38" r="26" fill="rgba(255,255,255,.35)" stroke="#111" stroke-width="7"/>
-            <circle cx="115" cy="38" r="26" fill="rgba(255,255,255,.35)" stroke="#111" stroke-width="7"/>
-            <path d="M71 34 q9 -8 18 0" fill="none" stroke="#111" stroke-width="6"/>
-            <path d="M19 32 L4 20 M141 32 L156 20" stroke="#111" stroke-width="6" stroke-linecap="round"/>
-          </svg>
-          <svg class="star" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="stg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f4f6"/><stop offset=".5" stop-color="#8d9097"/><stop offset="1" stop-color="#d8dade"/></linearGradient></defs><path d="M50 4 L62 38 L98 40 L69 62 L80 96 L50 76 L20 96 L31 62 L2 40 L38 38Z" fill="url(#stg)" stroke="#6d7077" stroke-width="2" stroke-linejoin="round"/></svg>
-        </div>
+  <img class="contact__img" src="assets/card.png" alt="" aria-hidden="true" draggable="false">
+  <div class="contact__links">
+    <a href="#" class="social" aria-label="Instagram">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6"/><circle cx="12" cy="12" r="4.6" fill="none" stroke="#f1e3cf" stroke-width="2"/><circle cx="17.6" cy="6.4" r="1.4" fill="#f1e3cf"/></svg>
+      Instagram
+    </a>
+    <a href="#" class="social" aria-label="LinkedIn">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4"/><text x="12" y="17" text-anchor="middle" font-size="12" font-weight="700" fill="#f1e3cf" font-family="Arial, sans-serif">in</text></svg>
+      LinkedIn
+    </a>
+    <a class="mail" href="mailto:hello@example.com">hello@example.com</a>
+  </div>
+</div>
       </div>
     </div>
   </div>
@@ -803,6 +809,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="preloader.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

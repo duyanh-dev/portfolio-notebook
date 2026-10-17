@@ -887,25 +887,56 @@ body.view-work .work-wrap{opacity:1;pointer-events:auto;visibility:visible;trans
 /* =========================================================
    PAGE 6 - CONTACT
    ========================================================= */
-.contact{justify-content:flex-start;padding-top:calc(var(--u)*4.4);padding-left:calc(var(--u)*3);padding-right:calc(var(--u)*3)}
+.contact{justify-content:flex-start;padding-top:calc(var(--u)*4.4);padding-left:calc(var(--u)*3);padding-right:calc(var(--u)*3);
+--ph-w:calc(var(--u)*24.5);   /* độ rộng điện thoại: tăng = to hơn */
+         --ph-end:calc(var(--u)*29);}
 .contact__top{display:flex;gap:calc(var(--u)*1.6);width:100%;align-items:flex-start;text-align:left}
-.phone{flex:none;width:calc(var(--u)*7);margin-top:calc(var(--u)*-4.4)}
-.phone__cord{fill:none;stroke:#1a1816;stroke-width:3.2}
-.contact__text{padding-top:calc(var(--u)*2.8)}
+/* .phone{flex:none;width:calc(var(--u)*7);margin-top:calc(var(--u)*-4.4)}
+.phone__cord{fill:none;stroke:#1a1816;stroke-width:3.2} */
+.contact__text{padding-top:calc(var(--u)*2.8);padding-left:calc(var(--u)*9.5)}
 .contact__text p{margin-top:calc(var(--u)*.7);line-height:1.3}
-.contact__card{position:relative;width:86%;aspect-ratio:1.62;margin-top:calc(var(--u)*3.4);align-self:flex-start;margin-left:calc(var(--u)*1)}
-.gingham{position:absolute;left:-7%;top:12%;width:44%;height:88%;transform:rotate(-8deg);
-  background:repeating-conic-gradient(#c8323a 0 25%,#fff 0 50%) 0 0/calc(var(--u)*2.2) calc(var(--u)*2.2);opacity:.9;box-shadow:0 2px 6px rgba(0,0,0,.25)}
-.kraft{position:absolute;inset:0 0 6% 8%;background:linear-gradient(#e7d9c4,#d4c0a4);box-shadow:0 calc(var(--u)*.3) calc(var(--u)*.7) rgba(0,0,0,.25);
-  display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr auto;align-items:center;justify-items:center;padding:6% 4% 8%;
-  clip-path:polygon(0 0,100% 0,100% 100%,3% 100%,0 96%,2% 90%,0 84%)}
+
+ /* ---- điện thoại: ảnh thật, dây rủ từ mép trên trang ---- */
+.phone{
+  position:absolute;z-index:6;
+  left:-30px;
+  width:var(--ph-w);height:auto;
+  top:0;  /* 5.81 = cao/rộng của ảnh; phần dây thừa bị trang cắt ở trên */
+  margin:0;
+  transform-origin:50% 0;
+  filter:drop-shadow(0 calc(var(--u)*.3) calc(var(--u)*.4) rgba(0,0,0,.28));
+  animation:phoneSway 5s ease-in-out infinite;
+  user-select:none;-webkit-user-drag:none;pointer-events:none;
+}
+@keyframes phoneSway{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(1.2deg)}}
+
+
+/* ---- thiệp: ảnh giấy, chữ đặt lên phần giấy trống ---- */
+.contact__card{
+  position:relative;width:96%;aspect-ratio:1000/742;
+  margin:calc(var(--u)*12.4) 0 0;align-self:center;
+}
+.contact__img{
+  position:absolute;inset:0;width:100%;height:100%;
+  filter:drop-shadow(0 calc(var(--u)*.35) calc(var(--u)*.6) rgba(0,0,0,.28));
+  user-select:none;-webkit-user-drag:none;pointer-events:none;
+}
+/* vùng giấy trống: tránh lỗ xé bên trái và con tem bên phải */
+.contact__links{
+  position:absolute;left:23%;right:20%;top:12%;bottom:38%;
+  display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr auto;
+  align-items:center;justify-items:center;
+}
+.contact__links .social{color:#5b1019}
+.contact__links .mail{
+  grid-column:1/-1;color:#5b1019;
+  font-family:var(--f-type);font-size:max(11px,calc(var(--u)*1.2));
+  border-bottom:1px solid rgba(91,16,25,.4);
+}
 .social{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:var(--fs-small)}
 .social svg{width:calc(var(--u)*2.1);fill:#5b1019}
 .mail{grid-column:1/-1;font-size:max(11px,calc(var(--u)*1.2));color:#5b1019;border-bottom:1px solid rgba(91,16,25,.4)}
-.seal{position:absolute;right:-4%;bottom:-2%;width:calc(var(--u)*5.2);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;color:#7d1017;font-size:calc(var(--u)*2.2);
-  background:radial-gradient(circle at 35% 30%,#d9444d,#8f121a 70%);box-shadow:0 3px 6px rgba(0,0,0,.4),inset 0 0 0 calc(var(--u)*.3) rgba(255,255,255,.12)}
-.glasses{position:absolute;right:2%;top:-18%;width:30%;transform:rotate(8deg);filter:drop-shadow(0 4px 3px rgba(0,0,0,.3))}
-.star{position:absolute;left:2%;bottom:-18%;width:calc(var(--u)*5.4);transform:rotate(-12deg);filter:drop-shadow(0 3px 3px rgba(0,0,0,.35))}
+
 
 /* =========================================================
    PAGE 7 - ENQUIRY (typewriter photo + live form on the paper)

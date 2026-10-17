@@ -367,8 +367,12 @@ function glActive() { return useGL && !isMobile(); }
         if (!order.some(function (o) { return o.leaf === l && o.side === s; })) order.push({ leaf: l, side: s });
       });
     });
-    order.forEach(function (o) { enqueue(function () { return capture(o.leaf, o.side); }); });
-    enqueue(function () { leaves.forEach(warm); });
+     var nVis = visibleFaces().length;
+  order.forEach(function (o, i) {
+    var p = enqueue(function () { return capture(o.leaf, o.side); });
+    if (i === nVis - 1) p.then(markBookReady);     // xong 2 mặt đang hiện là mở sổ
+  });
+  enqueue(function () { leaves.forEach(warm); });
   }
 
   function visibleFaces() {
