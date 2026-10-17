@@ -631,7 +631,6 @@ function setMobilePage(p, dirHint, instant) {
 
   /* stage height (cần cho mobile vì 2 view là absolute) */
  function fitStage() {
-document.documentElement.classList.toggle('lock-book', view === 'book' && isRot());   // <-- thêm dòng này
   if (!isNarrow() || view !== 'work') { stage.style.minHeight = ''; return; }
 
   var hdr = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hdr')) || 96;
