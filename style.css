@@ -1240,10 +1240,12 @@ body.view-book{min-height:0}
   /* khung: sổ bị đẩy lệch trái để chỉ lộ nửa trái, canh giữa theo chiều dọc */
 .book-wrap{
   top:0;bottom:auto;height:var(--vh);
-  align-items:flex-start;justify-content:center;
-  padding:var(--stage-t) 0 var(--stage-b);
-  will-change:auto;                              /* bỏ layer nặng gây giật */
+  align-items:flex-start;
+  justify-content:flex-start;                 /* neo trên, không canh giữa nữa */
+  padding:var(--stage-t) 0 0;                 /* chỉ còn khoảng cách trên */
+  will-change:auto;
 }
+
 .book{flex:none;margin-left:calc(var(--bw) * var(--win-l) * -1 + var(--shift))}
   .arrow{display:none}
 
@@ -1363,7 +1365,7 @@ body.view-book{min-height:0}
   display:flex;justify-content:space-between;align-items:center;
   position:absolute;left:0;right:0;margin:0;padding:0 6vw;z-index:130;
   bottom:auto;height:calc(var(--pg) - 10px);
-  top:calc(var(--stage-t) + (var(--vh) - var(--stage-t) - var(--stage-b) + var(--book-h)) / 2 - var(--arrow-up));
+  top:calc(var(--stage-t) + var(--book-h) - var(--arrow-up));   /* bám mép dưới sổ */
 }
 
   .pager button{width:84px;height:100%;padding:6px 10px;transition:transform .2s,opacity .3s}
@@ -1379,6 +1381,9 @@ body.view-book{min-height:0}
   font:max(10px,2.9vw) var(--f-type);letter-spacing:.1em;
   color:rgba(58,31,31,.5);
   text-shadow:0 1px 0 rgba(255,255,255,.6);
+  margin: auto;
+  width: fit-content;
+  
 }
   .credit b{
     font-weight:400;color:var(--blue);
