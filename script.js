@@ -50,7 +50,7 @@
   var body = document.body;
   var mqMobile = window.matchMedia('(max-width: 820px)');
 var mqRot = window.matchMedia('(max-width: 820px) and (orientation: portrait)');
-var isMobile = function () { return false; };            // sổ luôn dùng logic lật 3D
+var isMobile = function () { return mqRot.matches; };   // SP dọc = chế độ 1 trang           // sổ luôn dùng logic lật 3D
 var isNarrow = function () { return mqMobile.matches; };  // chỉ dùng cho màn Work
 var isRot = function () { return mqRot.matches; };
 var _rotWas = mqRot.matches;
@@ -116,8 +116,7 @@ else mqRot.addListener(onRotChange);
   }
   var useGL = webglOK();
   var ROT_GL = false;   // false = SP dọc lật bằng CSS (ổn định). true = thử lại lật cong WebGL
-function glActive() { return useGL && (ROT_GL || !isRot()); }
-
+function glActive() { return useGL && !isMobile(); }
   leaves.forEach(function (l) { l._dirty = { front: false, back: false }; l._p = 0; l._on = false; });
   function anyFlip() { return leaves.some(function (l) { return l._on; }); }
 
@@ -544,17 +543,34 @@ if (!glActive() || !glReady(leaf)) { cssFlip(leaf, idx, dir, start); return; }
     });
   })();
 
-  function setMobilePage(p, dirHint) {
-    p = clamp(p, 0, TOTAL_PAGES - 1);
-    var dir = dirHint || (p >= mPage ? 1 : -1);
-    mPage = p;
-    pages.forEach(function (el) {
-      var on = +el.getAttribute('data-page') === p;
-      el.classList.toggle('is-m-active', on);
-      el.classList.toggle('from-left', on && dir < 0);
-    });
-    updateUI();
-  }
+ var mTween = null;
+function mFinish(p) {
+  pages.forEach(function (el, i) {
+    el.classList.toggle('is-m-active', i === p);
+    gsap.set(el, { clearProps: 'all' });
+  });
+}
+function setMobilePage(p, dirHint, instant) {
+  p = clamp(p, 0, TOTAL_PAGES - 1);
+  if (mTween) mTween.progress(1);
+  var old = mPage;
+  var dir = dirHint || (p >= old ? 1 : -1);
+  mPage = p;
+
+  if (instant || p === old || !window.gsap) { mFinish(p); updateUI(); return; }
+
+  var a = pages[old], b = pages[p];
+  var mover = dir > 0 ? a : b;
+  a.classList.add('is-m-active');
+  b.classList.add('is-m-active');
+  gsap.set(dir > 0 ? b : a, { zIndex: 10 });
+  gsap.set(mover, { zIndex: 15, transformOrigin: '100% 50%', transformPerspective: 1200, rotationY: dir > 0 ? 0 : 180 });
+  mTween = gsap.to(mover, {
+    rotationY: dir > 0 ? 180 : 0, duration: .85, ease: 'power2.inOut',
+    onComplete: function () { mTween = null; mFinish(p); }
+  });
+  updateUI();
+}
 
   function pageNav(dir) {
     if (view !== 'book') return;
@@ -624,33 +640,7 @@ document.documentElement.classList.toggle('lock-book', view === 'book' && isRot(
 }
 
 function fitRot() {
-  if (!isRot()) return;
-  var PAPER_FILL = 0.985;   // trang giấy chiếm bao nhiêu bề ngang màn hình (1 = sát hẳn mép)
-  // vị trí vùng giấy trong ảnh sổ (khớp CSS .spread)
-  var PAPER_W = 0.8629, PAPER_H = 0.7488, PAPER_CX = 0.49761, PAPER_CY = 0.48990;
-
-  var b = $('#book'), wrap = $('#bookWrap'), pg = $('#pager');
-  var bw = b.offsetWidth, bh = b.offsetHeight;      // kích thước layout, chưa bị transform
-  var H = wrap.clientHeight, W = window.innerWidth;
-  var T = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hdr')) || 56; // mép da trên cho header
-  var B = pg.offsetHeight + (parseFloat(getComputedStyle(pg).bottom) || 0) + 6;                  // mép da dưới cho mũi tên
-
-  var kW = W * PAPER_FILL / (bh * PAPER_W);   // zoom để giấy vừa chiều ngang
-  var kCover = H / bw;                        // zoom để sổ phủ kín chiều cao
-  var kH = (H - T - B) / (bw * PAPER_H);      // zoom tối đa để giấy nằm giữa header và mũi tên
-  var k = Math.min(Math.max(kW, kCover), kW * 1.08, kH);
-
-  // dời sổ để tâm trang giấy nằm giữa vùng [dưới header, trên mũi tên]
-  var LIFT = 24;   // px muốn đẩy sổ lên. Số càng lớn sổ càng lên cao
-var targetY = T + (H - T - B) / 2 - LIFT;
-  var curY = H / 2 + (PAPER_CX - 0.5) * bw * k;
-  var mx = -(0.5 - PAPER_CY) * bh * k;
-  var my = targetY - curY;
-
-  var st = document.documentElement.style;
-  st.setProperty('--mk', k.toFixed(4));
-  st.setProperty('--mx', mx.toFixed(2) + 'px');
-  st.setProperty('--my', my.toFixed(2) + 'px');
+ 
 }
 window.addEventListener('resize', fitRot);
 window.addEventListener('orientationchange', fitRot);
@@ -810,7 +800,7 @@ window.addEventListener('load', fitRot);
   }
   function tvActive() {
     if (view !== 'book' || !tvOn || document.hidden) return false;
-    return isMobile() ? mPage <= 1 : spread === 0;
+    return isMobile() ? mPage === 1 : spread === 0;
   }
   var t0 = performance.now();
   function tvLoop(now) {
@@ -925,14 +915,7 @@ var TV_CHANNELS
 })();
 
 // đổi vector kéo trên màn hình -> hệ trục của sổ (đã xoay 90° + scale)
-function toLocal(sx, sy) {
-  if (!isRot()) return { x: sx, y: sy };
-  var cs = getComputedStyle(document.documentElement);
-  var k  = parseFloat(cs.getPropertyValue('--mk')) || 1;
-  var cr = parseFloat(cs.getPropertyValue('--cr')) || 1;
-  var s = k * cr;
-  return { x: sx / s, y: sy / s };
-}
+function toLocal(sx, sy) { return { x: sx, y: sy }; }
 
   /* =====================================================
      TESTIMONIALS: kéo thẻ
@@ -1336,10 +1319,11 @@ var dy = v.y * .25;
     measure();
     fitRot();
     renderDesktop();
-    setMobilePage(0, 1);
+    setMobilePage(0, 1, true);
+
     if (h === 'work' || h === 'store' || h === 'contact') {
       if (h === 'work') { view = 'book'; go('work', true); }
-      else { spread = h === 'contact' ? 3 : 2; renderDesktop(); setMobilePage(h === 'contact' ? 6 : 4, 1); updateUI(); }
+      else { spread = h === 'contact' ? 3 : 2; renderDesktop(); setMobilePage(h === 'contact' ? 6 : 4, 1, true);; updateUI(); }
     }
     updateUI();
     window.addEventListener('resize', fitStage);

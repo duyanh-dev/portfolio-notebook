@@ -1209,80 +1209,161 @@ body.is-flipping *,body.is-flipping *::before,body.is-flipping *::after{animatio
 }
 
 /* ---------- B) SP DỌC (≤820px + portrait) ---------- */
+/* ---------- B) SP DỌC (≤820px + portrait): XEM NỬA TRÁI CỦA SỔ PC, GÁY BÊN PHẢI ---------- */
 @media (max-width:820px) and (orientation:portrait){
-  :root{
-    --bw:720px;   /* bề rộng "thiết kế" của sổ ngang */
-    --cr:.69;     /* tỉ lệ thu nhỏ nội dung sau khi xoay thẳng lại */
-  }
+  :root {
+        --win-l: .105;
+        --win-r: .45;
+        --pg: 52px;
+        --vh: 100vh;
+        --bw: calc(100vw / (var(--win-r) - var(--win-l)));
+        --shift: 80px;
+    }
 
-  /* sổ chiếm cả màn hình (header và mũi tên nằm đè lên mép da) */
-  .book-wrap{top:0;padding:0}
-  body.view-book .stage{background:#1d1d1d}      /* lỡ hở mép thì ra màu da thay vì nền caro */
-
-  /* cuốn sổ: xoay +90°. --mk (zoom), --mx/--my (căn giữa trang giấy) do JS tính ở fitRot */
-  .book{
-    flex:none;
-    transform:translate(var(--mx,0px),var(--my,0px)) rotate(90deg) scale(var(--mk,.7));
-    transform-origin:50% 50%;
-  }
-
-  /* nội dung từng trang: xoay ngược -90° cho chữ đứng thẳng */
-  .page__inner{
-    transform:rotate(-90deg) scale(var(--cr));
-    transform-origin:50% 50%;
-  }
-  .cards{touch-action:none}
-
-  /* --- HEADER nằm trên mép da, dạng tem giấy để nổi bật --- */
-  .brand{
-    background:var(--paper);padding:1px 10px 3px;border-radius:6px;
-    text-shadow:none;transform:rotate(-2deg);
-    box-shadow:0 2px 0 rgba(0,0,0,.4),0 0 0 2px rgba(255,255,255,.9);
-  }
-  .main-nav{
-    background:var(--paper);padding:5px 12px;border-radius:99px;
-    gap:clamp(6px,2vw,12px);margin-right:8px;
-    box-shadow:0 2px 0 rgba(0,0,0,.4),0 0 0 2px rgba(255,255,255,.9);
-  }
-  .nav-link{font-size:clamp(13px,3.7vw,18px)}
-  .vinyl__disc{box-shadow:0 0 0 3px var(--paper),0 3px 8px rgba(0,0,0,.45),inset 0 0 0 2px #2b2f4a}
-
-  /* --- 2 mũi tên Prev / Next nằm trên mép da dưới, ngay dưới trang giấy --- */
-  .arrow{display:none}
-  .pager{
-    display:flex;justify-content:space-between;align-items:center;
-    position:absolute;left:0;right:0;bottom:calc(8px + env(safe-area-inset-bottom));
-    padding:0 6vw;z-index:130;margin:0;
-  }
-  .pager button{
-    width:84px;height:40px;padding:6px 14px;border-radius:99px;
-    background:var(--paper);
-    box-shadow:0 2px 0 rgba(0,0,0,.4),0 0 0 2px rgba(255,255,255,.9);
-    transition:transform .2s,opacity .3s;
-  }
-  .pager button svg{display:block;width:100%;height:100%;overflow:visible}
-  .pager button path{fill:none;stroke:#d8232e;stroke-width:8;stroke-linecap:round;stroke-linejoin:round}
-  .pager button:active{transform:scale(.92)}
-  .pager button[disabled]{opacity:0;pointer-events:none}
-  .pager__dots{display:none}
-
-    /* --- KHÓA CUỘN: sổ vừa khít đúng 1 màn hình (chỉ ở màn Book) --- */
-  :root{--vh:100%}
   @supports (height:100dvh){:root{--vh:100dvh}}
 
-  html.lock-book,
-  html.lock-book body{
-    height:100%;
-    overflow:hidden;
-    overscroll-behavior:none;
-  }
+  /* khóa cuộn: vừa 1 màn hình (chỉ màn Book) */
+  html.lock-book,html.lock-book body{height:100%;overflow:hidden;overscroll-behavior:none}
   body.view-book{min-height:0}
-  body.view-book .stage{
-    height:var(--vh);
-    min-height:0 !important;
+  body.view-book .stage{height:var(--vh);min-height:0!important}
+
+  .page__inner{
+    padding: 20px 20px 0
   }
-  body.view-book .book-wrap{
-    top:0;bottom:auto;
-    height:var(--vh);
+
+
+  /* khung: sổ bị đẩy lệch trái để chỉ lộ nửa trái, canh giữa theo chiều dọc */
+  .book-wrap{
+    top:0;bottom:auto;height:var(--vh);
+    align-items:flex-start;justify-content:center;
+    padding:var(--hdr) 0 calc(var(--pg) + env(safe-area-inset-bottom));
   }
+.book{flex:none;margin-left:calc(var(--bw) * var(--win-l) * -1 + var(--shift))}
+  .arrow{display:none}
+
+  /* mọi trang (cả trang phải của PC) nằm đúng vị trí TRANG TRÁI, chỉ trang active hiện */
+  .spread{perspective:none}
+  .leaf{display:contents}
+  .spread .page, .spread .leaf .face {
+    left: -70px;
+    right: auto;
+    top: 0;
+    bottom: 0;
+            width: 40.57%;
+
+    display: none;
+    z-index: 10;
+    transform: none;
+    clip-path: none;
+    border-radius: var(--pr) 0 0 var(--pr);
+    --hxx: calc(100% - var(--hx));
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+
+.rings {
+        display: block;
+        position: absolute;
+        /* z-index: 2; */
+        z-index: 1;
+        pointer-events: none;
+        user-select: none;
+        left: 21.41%;
+        top: -6.042%;
+        width: 26.2%;
+        height: auto;
+        filter: drop-shadow(calc(var(--u) * .45) calc(var(--u) * .35) calc(var(--u) * .5) rgba(0, 0, 0, .45)) drop-shadow(calc(var(--u) * -.35) calc(var(--u) * .2) calc(var(--u) * .4) rgba(0, 0, 0, .25));
+    }
+
+           .ring-1 {
+        display: block;
+        position: absolute;
+        z-index: 2;
+        pointer-events: none;
+        user-select: none;
+        left: 26.91%;
+        top: 5%;
+        width: 18.1%;
+        height: auto;
+        filter: drop-shadow(calc(var(--u) * .45) calc(var(--u) * .35) calc(var(--u) * .5) rgba(0, 0, 0, .45)) drop-shadow(calc(var(--u) * -.35) calc(var(--u) * .2) calc(var(--u) * .4) rgba(0, 0, 0, .25));
+    }
+        .ring-2 {
+        display: block;
+        position: absolute;
+        z-index: 2;
+        pointer-events: none;
+        user-select: none;
+        left: 26.91%;
+        top: 12%;
+        width: 18.1%;
+        height: auto;
+        filter: drop-shadow(calc(var(--u) * .45) calc(var(--u) * .35) calc(var(--u) * .5) rgba(0, 0, 0, .45)) drop-shadow(calc(var(--u) * -.35) calc(var(--u) * .2) calc(var(--u) * .4) rgba(0, 0, 0, .25));
+    }
+        .ring-3 {
+        display: block;
+        position: absolute;
+        z-index: 2;
+        pointer-events: none;
+        user-select: none;
+        left: 26.91%;
+        top: 19%;
+        width: 18.1%;
+        height: auto;
+        filter: drop-shadow(calc(var(--u) * .45) calc(var(--u) * .35) calc(var(--u) * .5) rgba(0, 0, 0, .45)) drop-shadow(calc(var(--u) * -.35) calc(var(--u) * .2) calc(var(--u) * .4) rgba(0, 0, 0, .25));
+    }
+        .ring-4 {
+        display: block;
+        position: absolute;
+        z-index: 2;
+        pointer-events: none;
+        user-select: none;
+        left: 26.91%;
+        bottom: 5%;
+        width: 18.1%;
+        height: auto;
+        filter: drop-shadow(calc(var(--u) * .45) calc(var(--u) * .35) calc(var(--u) * .5) rgba(0, 0, 0, .45)) drop-shadow(calc(var(--u) * -.35) calc(var(--u) * .2) calc(var(--u) * .4) rgba(0, 0, 0, .25));
+    }
+        .ring-5 {
+        display: block;
+        position: absolute;
+        z-index: 2;
+        pointer-events: none;
+        user-select: none;
+        left: 26.91%;
+        bottom: 12%;
+        width: 18.1%;
+        height: auto;
+        filter: drop-shadow(calc(var(--u) * .45) calc(var(--u) * .35) calc(var(--u) * .5) rgba(0, 0, 0, .45)) drop-shadow(calc(var(--u) * -.35) calc(var(--u) * .2) calc(var(--u) * .4) rgba(0, 0, 0, .25));
+    }
+        .ring-6 {
+        display: block;
+        position: absolute;
+        z-index: 2;
+        pointer-events: none;
+        user-select: none;
+        left: 26.91%;
+        bottom: 19%;
+        width: 18.1%;
+        height: auto;
+        filter: drop-shadow(calc(var(--u) * .45) calc(var(--u) * .35) calc(var(--u) * .5) rgba(0, 0, 0, .45)) drop-shadow(calc(var(--u) * -.35) calc(var(--u) * .2) calc(var(--u) * .4) rgba(0, 0, 0, .25));
+    }
+  .spread .page.is-m-active{display:block}
+
+  .shop__bag{display:inline-flex}                 /* nút BAG nhảy sang trang hóa đơn */
+
+  /* 2 mũi tên dưới cùng */
+  .pager{
+    display:flex;justify-content:space-between;align-items:center;
+    position:absolute;left:0;right:0;margin:0;padding:0 6vw;z-index:130;
+    bottom:calc(6px + env(safe-area-inset-bottom));height:calc(var(--pg) - 10px);
+  }
+  .pager button{width:84px;height:100%;padding:6px 10px;transition:transform .2s,opacity .3s}
+  .pager button svg{display:block;width:100%;height:100%;overflow:visible}
+  .pager button path{fill:none;stroke:#d8232e;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 1px rgba(0,0,0,.4))}
+  .pager button:active{transform:scale(.92)}
+  .pager button[disabled]{opacity:0;pointer-events:none}
+  .pager__dots{display:flex;gap:6px}
+  .pager__dots i{width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,.2);transition:all .3s}
+  .pager__dots i.is-on{background:var(--orange);width:20px;border-radius:8px}
 }
