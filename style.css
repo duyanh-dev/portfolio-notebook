@@ -1215,26 +1215,22 @@ body.is-flipping *,body.is-flipping *::before,body.is-flipping *::after{animatio
         --win-l: .105;
         --win-r: .45;
         --pg: 52px;
-        --vh: 100vh;
+  --vh:100vh;                                   /* dự phòng cho máy cũ */
+    --book-h:calc(var(--bw) * 941 / 1672);        /* chiều cao thật của ảnh sổ */
+  --arrow-up:46px;                              /* mũi tên cao hơn mép dưới sổ bao nhiêu */
+  --scroll-extra:120px;                         /* phần trang dư để cuộn */
+
         --bw: calc(100vw / (var(--win-r) - var(--win-l)));
         --shift: 80px;
-           --gap-t:0px;     /* khoảng cách sổ so với đáy header. Âm (vd -14px) = sổ chui lên dưới header */
-    --gap-b:56px;
-    --scroll-extra:120px;
-    --book-h:calc(var(--bw) * 941 / 1672);   /* chiều cao thật của ảnh sổ */
---arrow-up:46px;                          /* mũi tên nằm cao hơn mép dưới sổ bao nhiêu. Tăng = lên cao hơn */
+    --scroll-extra:120px
     }
 
-  @supports (height:100dvh){:root{--vh:100dvh}}
-
+@supports (height:100svh){:root{--vh:100svh}}   /* svh = cố định, không đổi khi cuộn */
 .stage{
-  --stage-t:calc(var(--hdr) + 32px);   /* tăng số này để sổ cách header xa hơn */
-  --stage-b:calc(var(--pg) + 56px + env(safe-area-inset-bottom));
-
-    min-height:calc(var(--vh) + var(--scroll-extra));
-       /* cách đáy: tăng 56px để sổ lên cao hơn */
+  --stage-t:calc(var(--hdr) + 32px);                                 /* cách trên (dưới header) */
+  --stage-b:calc(var(--pg) + 56px + env(safe-area-inset-bottom));    /* cách đáy */
+  min-height:calc(var(--vh) + var(--scroll-extra));
 }
-
 body.view-book{min-height:0}
   .page__inner{
     padding: 20px 20px 0
@@ -1242,15 +1238,12 @@ body.view-book{min-height:0}
 
 
   /* khung: sổ bị đẩy lệch trái để chỉ lộ nửa trái, canh giữa theo chiều dọc */
-  .book-wrap{
-    top:0;bottom:auto;height:var(--vh);
-    align-items:flex-start;justify-content:center;
-     padding:var(--stage-t) 0 var(--stage-b);
-  justify-content:center;
-          margin-top: 30px;
-          padding-top: 0;
-
-  }
+.book-wrap{
+  top:0;bottom:auto;height:var(--vh);
+  align-items:flex-start;justify-content:center;
+  padding:var(--stage-t) 0 var(--stage-b);
+  will-change:auto;                              /* bỏ layer nặng gây giật */
+}
 .book{flex:none;margin-left:calc(var(--bw) * var(--win-l) * -1 + var(--shift))}
   .arrow{display:none}
 
@@ -1366,11 +1359,10 @@ body.view-book{min-height:0}
   .shop__bag{display:inline-flex}                 /* nút BAG nhảy sang trang hóa đơn */
 
   /* 2 mũi tên dưới cùng */
-  .pager{
+.pager{
   display:flex;justify-content:space-between;align-items:center;
   position:absolute;left:0;right:0;margin:0;padding:0 6vw;z-index:130;
   bottom:auto;height:calc(var(--pg) - 10px);
-  /* đáy sổ = stage-t + (vùng trống + chiều cao sổ) / 2, vì sổ canh giữa theo chiều dọc */
   top:calc(var(--stage-t) + (var(--vh) - var(--stage-t) - var(--stage-b) + var(--book-h)) / 2 - var(--arrow-up));
 }
 
@@ -1380,7 +1372,7 @@ body.view-book{min-height:0}
   .pager button:active{transform:scale(.92)}
   .pager button[disabled]{opacity:0;pointer-events:none}
     .pager__dots{display:none}                      /* bỏ các chấm */
- .credit{
+.credit{
   position:fixed;left:0;right:0;top:auto;
   bottom:calc(8px + env(safe-area-inset-bottom));
   margin:0;text-align:center;white-space:nowrap;
