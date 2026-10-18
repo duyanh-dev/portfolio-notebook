@@ -72,6 +72,7 @@ else mqRot.addListener(onRotChange);
   var stage = $('#stage');
   var bookWrap = $('#bookWrap');
   var workWrap = $('#workWrap');
+  var aboutWrap = $('#aboutWrap');
   var leaves = $$('.leaf');
   var pages = $$('.page');
   var navLinks = $$('.nav-link');
@@ -584,8 +585,9 @@ function setMobilePage(p, dirHint, instant) {
 
   function currentSection() {
     if (view === 'work') return 'work';
+    if (view === 'about') return 'about';
     var s = isMobile() ? Math.floor(mPage / 2) : spread;
-    return s <= 1 ? 'about' : (s === 2 ? 'store' : 'contact');
+    return s <= 1 ? 'overview' : (s === 2 ? 'store' : 'contact');
   }
 
   function updateUI() {
@@ -606,12 +608,14 @@ function setMobilePage(p, dirHint, instant) {
   }
 
   function go(name, silent) {
-    if (name === 'work') {
+    if (name === 'about') {
+      showView('about');
+    } else if (name === 'work') {
       showView('work');
     } else {
       showView('book');
-      var spreadMap = { about: 0, store: 2, contact: 3 };
-      var pageMap = { about: 0, store: 4, contact: 6 };
+      var spreadMap = { overview: 0, store: 2, contact: 3 };
+      var pageMap = { overview: 0, store: 4, contact: 6 };
       if (isMobile()) setMobilePage(pageMap[name], pageMap[name] >= mPage ? 1 : -1);
       else goSpread(spreadMap[name]);
     }
@@ -626,8 +630,10 @@ function setMobilePage(p, dirHint, instant) {
     view = v;
     body.classList.toggle('view-work', v === 'work');
     body.classList.toggle('view-book', v === 'book');
+    body.classList.toggle('view-about', v === 'about');
+    aboutWrap.setAttribute('aria-hidden', v === 'about' ? 'false' : 'true');
     workWrap.setAttribute('aria-hidden', v === 'work' ? 'false' : 'true');
-    bookWrap.setAttribute('aria-hidden', v === 'work' ? 'true' : 'false');
+    bookWrap.setAttribute('aria-hidden', v === 'book' ? 'false' : 'true');
     if (v === 'work') { cam.enter(); } else { cam.leave(); }
     window.scrollTo(0, 0);
     setTimeout(fitStage, 50);
@@ -671,7 +677,7 @@ window.addEventListener('load', fitRot);
       if (e.key === 'ArrowRight') pageNav(1);
       if (e.key === 'ArrowLeft') pageNav(-1);
     } else {
-      cam.key(e);
+      if (view === 'work') cam.key(e);
     }
   });
 
@@ -1314,6 +1320,84 @@ var dy = v.y * .25;
     };
   })();
 
+    /* =====================================================
+     ABOUT CTA + HIỆU ỨNG CHUYỂN TRANG (dải giấy + flash)
+     ===================================================== */
+  (function () {
+    var COLORS = ['#c4202a', '#2147b0', '#e8892f', '#f6f3ea', '#3a1f1f', '#c4202a', '#2147b0'];
+    var el = null, strips = [], stamp, linePath, flashEl, busy = false;
+
+    function build() {
+      if (el) return;
+      var n = isNarrow() ? 5 : 7, html = '', i;
+      for (i = 0; i < n; i++) html += '<i class="fx__strip" style="--c:' + COLORS[i % COLORS.length] + '"></i>';
+      el = document.createElement('div');
+      el.className = 'fx';
+      el.setAttribute('aria-hidden', 'true');
+      el.innerHTML =
+        '<div class="fx__strips">' + html + '</div>' +
+        '<div class="fx__center"><div class="fx__stamp">' +
+          '<span class="fx__hi">hi, it\u2019s me!</span>' +
+          '<svg class="fx__line" viewBox="0 0 200 14" preserveAspectRatio="none"><path pathLength="300" vector-effect="non-scaling-stroke" d="M4 8 C40 2 70 13 105 7 S170 3 196 8"/></svg>' +
+          '<small class="fx__small">ABOUT &middot; PAGE 01</small>' +
+        '</div></div>' +
+        '<div class="fx__flash"></div>';
+      document.body.appendChild(el);
+      strips = $$('.fx__strip', el);
+      stamp = $('.fx__stamp', el);
+      linePath = $('.fx__line path', el);
+      flashEl = $('.fx__flash', el);
+    }
+
+    function playAbout() {
+      if (busy || view === 'about') return;
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce || !window.gsap) { go('about'); return; }
+
+      busy = true;
+      build();
+      el.classList.add('is-on');
+      body.classList.add('is-locked');
+
+      gsap.set(strips, { scaleY: 0, transformOrigin: '50% 100%' });
+      gsap.set(stamp, { autoAlpha: 0, scale: .35, rotation: -16 });
+      gsap.set(linePath, { strokeDashoffset: 300 });
+      gsap.set(flashEl, { opacity: 0 });
+
+      var tl = gsap.timeline({
+        onComplete: function () {
+          el.classList.remove('is-on');
+          body.classList.remove('is-locked');
+          busy = false;
+        }
+      });
+
+      tl.to(strips, { scaleY: 1, duration: .5, ease: 'power3.inOut', stagger: { each: .05, from: 'start' } })
+        .to(stamp, { autoAlpha: 1, scale: 1, rotation: -4, duration: .6, ease: 'back.out(2.4)' }, '-=.25')
+        .to(linePath, { strokeDashoffset: 0, duration: .45, ease: 'power2.out' }, '-=.3')
+        .add(function () { go('about'); }, '+=.12')                       // đổi view khi màn hình đã bị che kín
+        .to(flashEl, { opacity: .95, duration: .07, ease: 'none' })      // flash máy ảnh
+        .to(flashEl, { opacity: 0, duration: .45, ease: 'power2.out' })
+        .to(stamp, { autoAlpha: 0, scale: 1.25, rotation: 3, duration: .35, ease: 'power2.in' }, '+=.18')
+        .set(strips, { transformOrigin: '50% 0%' })
+        .to(strips, { scaleY: 0, duration: .5, ease: 'power3.inOut', stagger: { each: .05, from: 'end' } }, '-=.12');
+    }
+
+    // bấm nút About me dưới Testimonials (delegation: dùng được cả HTML PC lẫn template mobile)
+    document.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('.about-cta')) playAbout();
+    });
+
+    // bấm "About" trên menu cũng dùng hiệu ứng này (bắt ở capture để không đụng handler cũ)
+    var mainNav = $('.main-nav');
+    if (mainNav) mainNav.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('.nav-link[data-go="about"]');
+      if (!a || view === 'about') return;
+      e.preventDefault(); e.stopPropagation();
+      playAbout();
+    }, true);
+  })();
+
   /* =====================================================
      INIT
      ===================================================== */
@@ -1324,8 +1408,8 @@ var dy = v.y * .25;
     renderDesktop();
     setMobilePage(0, 1, true);
 
-    if (h === 'work' || h === 'store' || h === 'contact') {
-      if (h === 'work') { view = 'book'; go('work', true); }
+    if (h === 'work' || h === 'about' || h === 'store' || h === 'contact') {
+      if (h === 'work' || h === 'about') { view = 'book'; go(h, true); }
       else { spread = h === 'contact' ? 3 : 2; renderDesktop(); setMobilePage(h === 'contact' ? 6 : 4, 1, true);; updateUI(); }
     }
     updateUI();
@@ -1333,4 +1417,3 @@ var dy = v.y * .25;
     window.addEventListener('load', fitStage);
   })();
 })();
-

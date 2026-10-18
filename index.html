@@ -12,6 +12,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Londrina+Solid:wght@400;900&family=Patrick+Hand&family=Special+Elite&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/binder.png">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="about.css">
+  <link rel="stylesheet" href="about2.css">
   <link rel="stylesheet" href="preloader.css">
   <script>document.documentElement.classList.add('is-loading')</script>
 
@@ -56,10 +58,11 @@
 </div>
 <!-- ============ HEADER ============ -->
 <header class="site-header">
-  <a href="#about" class="brand" data-go="about" aria-label="YourName, home">YOURNAME</a>
+  <a href="#overview" class="brand" data-go="overview" aria-label="YourName, home">YOURNAME</a>
 
   <nav class="main-nav" aria-label="Main navigation">
-    <a href="#about" class="nav-link is-active" data-go="about">About<svg class="scribble" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true"><path pathLength="400" d="M62 5 C24 2 4 15 8 28 C12 42 52 48 86 44 C113 40 119 22 102 12 C88 4 42 1 26 9"/></svg></a>
+    <a href="#overview" class="nav-link is-active" data-go="overview">Overview<svg class="scribble" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true"><path pathLength="400" d="M62 5 C24 2 4 15 8 28 C12 42 52 48 86 44 C113 40 119 22 102 12 C88 4 42 1 26 9"/></svg></a>
+    <a href="#about" class="nav-link" data-go="about">About<svg class="scribble" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true"><path pathLength="400" d="M62 5 C24 2 4 15 8 28 C12 42 52 48 86 44 C113 40 119 22 102 12 C88 4 42 1 26 9"/></svg></a>
     <a href="#work" class="nav-link" data-go="work">Work<svg class="scribble" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true"><path pathLength="400" d="M62 5 C24 2 4 15 8 28 C12 42 52 48 86 44 C113 40 119 22 102 12 C88 4 42 1 26 9"/></svg></a>
     <a href="#store" class="nav-link" data-go="store">Store<svg class="scribble" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true"><path pathLength="400" d="M62 5 C24 2 4 15 8 28 C12 42 52 48 86 44 C113 40 119 22 102 12 C88 4 42 1 26 9"/></svg></a>
     <a href="#contact" class="nav-link" data-go="contact">Contact<svg class="scribble" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true"><path pathLength="400" d="M62 5 C24 2 4 15 8 28 C12 42 52 48 86 44 C113 40 119 22 102 12 C88 4 42 1 26 9"/></svg></a>
@@ -189,6 +192,14 @@
     </div>
   </article>
 </div>
+
+              <button type="button" class="about-cta" aria-label="Go to the About page">
+  <small class="about-cta__eyebrow">psst… wanna know who's behind this?</small>
+  <span class="about-cta__main">
+    About me
+    <svg class="about-cta__arrow" viewBox="0 0 120 60" aria-hidden="true"><path d="M6 32 C34 26 62 28 100 30 M80 10 C92 18 104 24 114 30 C102 38 90 46 78 54"/></svg>
+  </span>
+</button>
               <p class="hint">Drag the cards across</p>
               <svg class="doodle doodle--a" viewBox="0 0 80 80" aria-hidden="true"><path d="M8 66 C20 30 44 12 72 10" /></svg>
               <svg class="doodle doodle--b" viewBox="0 0 80 80" aria-hidden="true"><path d="M40 12 C70 10 76 46 46 56 C20 64 14 38 36 30 C54 26 58 46 44 48" /></svg>
@@ -405,6 +416,79 @@
 </div>
   </section>
 
+  <!-- ============ ABOUT NOTEBOOK (trang tĩnh: film strip + polaroid) ============ -->
+  <section class="about-wrap" id="aboutWrap" aria-label="About me" aria-hidden="true">
+    <div class="abook">
+      <div class="aspread">
+
+        <!-- trang trái: tiêu đề + chữ + cuộn phim -->
+        <div class="apage apage--l">
+          <div class="apage__inner about-l">
+            <div class="atitlewrap">
+              <h2 class="title atitle">A little bit about me</h2>
+              <svg class="atitle__line" viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="300" vector-effect="non-scaling-stroke" d="M4 8 C40 2 70 13 105 7 S170 3 196 8"/></svg>
+            </div>
+
+            <div class="about-l__body">
+              <div class="atext">
+                <p>Hi, I'm <b class="hl">Talia</b> a creative with a background in music, photography, and visual storytelling.</p>
+                <p>I'm a professionally trained violinist with a 9-year diploma and have been freelancing since I was 16. Over the years, I've worked across creative fields, including appearances on TV, music videos and founder of a wedding studio based in Australia. I'm a fast learner, adaptable, and comfortable jumping into new environments and projects.</p>
+                <p>As a traveller at heart, I packed my bags and moved to Australia for a few years to explore, grow, and chase new experiences. Now based in Vietnam, I carry that same sense of adventure into everything I create.</p>
+              </div>
+
+              <!-- cuộn phim: thay ảnh bằng assets/about-1.jpg ... about-3.jpg -->
+              <div class="afilm">
+                <i class="afilm__holes afilm__holes--l" aria-hidden="true"></i>
+                <i class="afilm__holes afilm__holes--r" aria-hidden="true"></i>
+                <span class="afilm__edge" aria-hidden="true">SNAPPY FILM 400 &#9656; 11</span>
+                <figure class="aframe aframe--bw">
+                  <div class="apic apic--1"><img src="assets/about-1.jpg" alt="Portrait" onerror="this.remove()"></div>
+                </figure>
+                <figure class="aframe">
+                  <div class="apic apic--2"><img src="assets/about-2.jpg" alt="Portrait in colour" onerror="this.remove()"></div>
+                </figure>
+                <figure class="aframe aframe--bw">
+                  <div class="apic apic--3"><img src="assets/about-3.jpg" alt="Portrait outdoors" onerror="this.remove()"></div>
+                </figure>
+                <span class="afilm__edge" aria-hidden="true">&#9656; 12 &nbsp; 12A &nbsp; 13</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- trang phải: polaroid + chữ + vé / dấu -->
+        <div class="apage apage--r">
+          <div class="apage__inner about-r">
+            <figure class="apolaroid">
+              <i class="atape atape--l" aria-hidden="true"></i>
+              <i class="atape atape--r" aria-hidden="true"></i>
+              <div class="apolaroid__pic"><img src="assets/about-polaroid.jpg" alt="Me and friends, seen from above" onerror="this.remove()"></div>
+              <figcaption>me &amp; my people</figcaption>
+            </figure>
+
+            <p class="atext atext--r">Outside of work, I love film photography, Polaroids, junk journaling, hanging out with friends and anything that feels honest, imperfect, and personal which naturally influences my creative approach. This website was designed personally, imagined as a digital version of my journals.</p>
+
+            <p class="achips" aria-hidden="true"><i>violin</i><i>film</i><i>journals</i><i>travel</i></p>
+
+            <div class="abits" aria-hidden="true">
+              <div class="aticket"><b>AU</b><span>&rarr;</span><b>VN</b><small>BOARDING &middot; ONE WAY</small></div>
+              <span class="astamp">FREELANCE<br>SINCE 16</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- gáy sổ + vòng kim loại (dùng lại ảnh của sổ chính) -->
+        <img class="rings" src="assets/binder-rod1.png" alt="" aria-hidden="true" draggable="false">
+        <img class="ring-1" src="assets/ring1.png" alt="" aria-hidden="true" draggable="false">
+        <img class="ring-2" src="assets/ring1.png" alt="" aria-hidden="true" draggable="false">
+        <img class="ring-3" src="assets/ring1.png" alt="" aria-hidden="true" draggable="false">
+        <img class="ring-4" src="assets/ring1.png" alt="" aria-hidden="true" draggable="false">
+        <img class="ring-5" src="assets/ring1.png" alt="" aria-hidden="true" draggable="false">
+        <img class="ring-6" src="assets/ring1.png" alt="" aria-hidden="true" draggable="false">
+      </div>
+    </div>
+  </section>
+
   <!-- ============ WORK NOTEBOOK (portrait / camera) ============ -->
   <section class="work-wrap" id="workWrap" aria-label="Work" aria-hidden="true">
   <div class="wbook">
@@ -596,6 +680,13 @@
             </div>
           </article>
         </div>
+        <button type="button" class="about-cta" aria-label="Go to the About page">
+  <small class="about-cta__eyebrow">psst… wanna know who's behind this?</small>
+  <span class="about-cta__main">
+    About me
+    <svg class="about-cta__arrow" viewBox="0 0 120 60" aria-hidden="true"><path d="M6 32 C34 26 62 28 100 30 M80 10 C92 18 104 24 114 30 C102 38 90 46 78 54"/></svg>
+  </span>
+</button>
         <p class="hint">Drag the cards across</p>
         <svg class="doodle doodle--a" viewBox="0 0 80 80" aria-hidden="true"><path d="M8 66 C20 30 44 12 72 10" /></svg>
         <svg class="doodle doodle--b" viewBox="0 0 80 80" aria-hidden="true"><path d="M40 12 C70 10 76 46 46 56 C20 64 14 38 36 30 C54 26 58 46 44 48" /></svg>
@@ -811,5 +902,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="preloader.js"></script>
 <script src="script.js"></script>
+
+<script src="about.js"></script>
 </body>
 </html>
