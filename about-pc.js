@@ -24,6 +24,8 @@
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
   var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
   var hasGsap = !!window.gsap;
+  /** Điện thoại (dọc hoặc ngang nhỏ) */
+var SP = window.matchMedia('(max-width: 820px), (pointer: coarse) and (max-height: 520px)').matches;
 
   var screen = $('.pc__screen', pc), os = $('.os', pc);
   if (!screen || !os) return;
@@ -430,8 +432,9 @@
 
   /** Notepad: gõ là tự lưu */
   function openNotepad() {
-    openX('notepad', { title: 'note.txt - Notepad', glyph: '\u270E', color: '#e8892f', w: .62, h: .7 }, function (body) {
-      body.innerHTML = '<textarea class="xw-note" spellcheck="false" placeholder="Dear diary,&#10;&#10;(type here, it saves itself)"></textarea><div class="xw-stat"></div>';
+    openX('notepad', { title: 'note.txt - Notepad', glyph: '\u270E', color: '#e8892f', w: SP ? .96 : .7, h: SP ? .92 : .78 }, 
+    function (body) {
+        body.innerHTML = '<textarea class="xw-note" spellcheck="false" placeholder="Dear diary,&#10;&#10;(type here, it saves itself)"></textarea><div class="xw-stat"></div>';
       var ta = $('.xw-note', body), st = $('.xw-stat', body);
       ta.value = store('note') || '';
       /** Cập nhật số ký tự + lưu */
@@ -439,63 +442,123 @@
       ta.addEventListener('input', sync); sync();
     });
   }
+  
+  /** Paint: vẽ tay, cầu vồng, tẩy, ZOOM (nút / pinch / Ctrl+wheel), HAND để kéo canvas, lưu PNG */
 
-  /** Paint: vẽ tay, bút cầu vồng, cục tẩy, lưu PNG */
-  function openPaint() {
-    openX('paint', { title: 'untitled - Paint', glyph: '\u2710', color: '#d14f8b', w: .72, h: .8 }, function (body) {
-      var COLORS = ['#111111', '#e0574a', '#e8892f', '#f2c23c', '#43a047', '#31a8ff', '#7d2ae8', '#ffffff'];
-      body.innerHTML = '<div class="xw-tools">' +
-        COLORS.map(function (c, i) { return '<button type="button" class="xw-sw' + (i ? '' : ' is-on') + '" data-c="' + c + '" style="background:' + c + '" aria-label="Colour ' + c + '"></button>'; }).join('') +
-        '<input type="range" class="xw-size" min="1" max="26" value="5" aria-label="Brush size">' +
-        '<button type="button" class="xw-b" data-t="rainbow">RAINBOW</button><button type="button" class="xw-b" data-t="eraser">ERASER</button>' +
-        '<button type="button" class="xw-b" data-t="clear">CLEAR</button><button type="button" class="xw-b" data-t="save">SAVE</button></div>' +
-        '<div class="xw-cvwrap"><canvas class="xw-cv"></canvas></div>';
-      var wrap = $('.xw-cvwrap', body), cv = $('.xw-cv', body), g = cv.getContext('2d');
-      var color = COLORS[0], rainbow = false, eraser = false, hue = 0, last = null, size = $('.xw-size', body);
 
-      /** Đặt kích thước canvas theo khung rồi tô nền trắng */
-      function fit() {
-        cv.width = Math.max(50, wrap.clientWidth); cv.height = Math.max(50, wrap.clientHeight);
-        g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height);
+function openPaint() {
+  openX('paint', { title: 'untitled - Paint', glyph: '\u2710', color: '#d14f8b', w: SP ? .97 : .8, h: SP ? .92 : .88 }, function (body) {
+    var COLORS = ['#111111', '#e0574a', '#e8892f', '#f2c23c', '#43a047', '#31a8ff', '#7d2ae8', '#ffffff'];
+    body.innerHTML = '<div class="xw-tools">' +
+      COLORS.map(function (c, i) { return '<button type="button" class="xw-sw' + (i ? '' : ' is-on') + '" data-c="' + c + '" style="background:' + c + '" aria-label="Colour ' + c + '"></button>'; }).join('') +
+      '<input type="range" class="xw-size" min="1" max="26" value="5" aria-label="Brush size">' +
+      '<button type="button" class="xw-b" data-t="rainbow">RAINBOW</button><button type="button" class="xw-b" data-t="eraser">ERASER</button>' +
+      '<button type="button" class="xw-b" data-t="hand">HAND</button>' +
+      '<button type="button" class="xw-b" data-t="zout" aria-label="Zoom out">&minus;</button><span class="xw-zoomv">100%</span>' +
+      '<button type="button" class="xw-b" data-t="zin" aria-label="Zoom in">+</button><button type="button" class="xw-b" data-t="zfit">FIT</button>' +
+      '<button type="button" class="xw-b" data-t="clear">CLEAR</button><button type="button" class="xw-b" data-t="save">SAVE</button></div>' +
+      '<div class="xw-cvwrap"><canvas class="xw-cv"></canvas></div>';
+    var wrap = $('.xw-cvwrap', body), cv = $('.xw-cv', body), g = cv.getContext('2d'), zv = $('.xw-zoomv', body);
+    var color = COLORS[0], rainbow = false, eraser = false, hue = 0, last = null, size = $('.xw-size', body);
+    var zoom = 1, panMode = false, pts = {}, pinch = null, panS = null;
+
+    function fit() {
+      cv.width = Math.max(50, wrap.clientWidth); cv.height = Math.max(50, wrap.clientHeight);
+      g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height);
+    }
+    requestAnimationFrame(fit);
+
+    /** Đổi zoom, giữ nguyên điểm (cx,cy) trên màn hình đứng yên */
+    function setZoom(z, cx, cy) {
+      z = clamp(Math.round(z * 100) / 100, .5, 4);
+      var r = cv.getBoundingClientRect(), wr = wrap.getBoundingClientRect();
+      if (cx == null) { cx = wr.left + wr.width / 2; cy = wr.top + wr.height / 2; }
+      var fx = r.width ? (cx - r.left) / r.width : .5, fy = r.height ? (cy - r.top) / r.height : .5;
+      zoom = z;
+      if (z === 1) { cv.style.width = ''; cv.style.height = ''; }
+      else { cv.style.width = Math.round(cv.width * z) + 'px'; cv.style.height = Math.round(cv.height * z) + 'px'; }
+      var n = cv.getBoundingClientRect();
+      wrap.scrollLeft += (n.left + fx * n.width) - cx;
+      wrap.scrollTop += (n.top + fy * n.height) - cy;
+      zv.textContent = Math.round(z * 100) + '%';
+    }
+    function pt(e) { var r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * cv.width / r.width, (e.clientY - r.top) * cv.height / r.height]; }
+    function seg(a, b) {
+      if (rainbow && !eraser) { hue = (hue + 5) % 360; g.strokeStyle = 'hsl(' + hue + ',90%,55%)'; }
+      else g.strokeStyle = eraser ? '#fff' : color;
+      g.lineWidth = +size.value * (eraser ? 2 : 1); g.lineCap = g.lineJoin = 'round';
+      g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke();
+    }
+    function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y) || 1; }
+
+    cv.addEventListener('pointerdown', function (e) {
+      pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+      try { cv.setPointerCapture(e.pointerId); } catch (er) {}
+      var ids = Object.keys(pts);
+      if (ids.length >= 2) {                               // 2 ngón: pinch zoom + kéo
+        last = null; panS = null;
+        var a = pts[ids[0]], b = pts[ids[1]];
+        pinch = { d: dist(a, b), z: zoom, mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2 };
+        return;
       }
-      requestAnimationFrame(fit);
-      /** Đổi toạ độ con trỏ -> toạ độ canvas */
-      function pt(e) { var r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * cv.width / r.width, (e.clientY - r.top) * cv.height / r.height]; }
-      /** Vẽ 1 đoạn từ điểm a tới b */
-      function seg(a, b) {
-        if (rainbow && !eraser) { hue = (hue + 5) % 360; g.strokeStyle = 'hsl(' + hue + ',90%,55%)'; }
-        else g.strokeStyle = eraser ? '#fff' : color;
-        g.lineWidth = +size.value * (eraser ? 2 : 1); g.lineCap = g.lineJoin = 'round';
-        g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke();
-      }
-      cv.addEventListener('pointerdown', function (e) { last = pt(e); seg(last, [last[0] + .1, last[1]]); try { cv.setPointerCapture(e.pointerId); } catch (er) {} });
-      cv.addEventListener('pointermove', function (e) { if (!last) return; var p = pt(e); seg(last, p); last = p; });
-      ['pointerup', 'pointercancel'].forEach(function (ev) { cv.addEventListener(ev, function () { last = null; }); });
-
-      body.addEventListener('click', function (e) {
-        var sw = e.target.closest('.xw-sw'), tb2 = e.target.closest('[data-t]');
-        if (sw) {
-          color = sw.getAttribute('data-c'); eraser = false; rainbow = false;
-          $$('.xw-sw', body).forEach(function (s) { s.classList.toggle('is-on', s === sw); });
-          $$('[data-t]', body).forEach(function (b) { b.classList.remove('is-on'); }); beep(600, .03);
-        } else if (tb2) {
-          var t = tb2.getAttribute('data-t');
-          if (t === 'rainbow') { rainbow = !rainbow; eraser = false; tb2.classList.toggle('is-on', rainbow); }
-          else if (t === 'eraser') { eraser = !eraser; tb2.classList.toggle('is-on', eraser); }
-          else if (t === 'clear') { g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); say('Canvas cleared'); }
-          else if (t === 'save') {
-            cv.toBlob(function (bl) {
-              if (!bl) return;
-              var a = document.createElement('a'); a.href = URL.createObjectURL(bl); a.download = 'my-drawing.png'; a.click();
-              setTimeout(function () { URL.revokeObjectURL(a.href); }, 1500);
-            });
-            say('Saved my-drawing.png'); chime();
-          }
-          beep(520, .04);
-        }
-      });
+      if (panMode) { panS = { x: e.clientX, y: e.clientY, l: wrap.scrollLeft, t: wrap.scrollTop }; return; }
+      last = pt(e); seg(last, [last[0] + .1, last[1]]);
     });
-  }
+    cv.addEventListener('pointermove', function (e) {
+      if (pts[e.pointerId]) { pts[e.pointerId].x = e.clientX; pts[e.pointerId].y = e.clientY; }
+      var ids = Object.keys(pts);
+      if (pinch && ids.length >= 2) {
+        var a = pts[ids[0]], b = pts[ids[1]], mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+        setZoom(pinch.z * dist(a, b) / pinch.d, mx, my);
+        wrap.scrollLeft -= mx - pinch.mx; wrap.scrollTop -= my - pinch.my;
+        pinch.mx = mx; pinch.my = my;
+        return;
+      }
+      if (panS) { wrap.scrollLeft = panS.l - (e.clientX - panS.x); wrap.scrollTop = panS.t - (e.clientY - panS.y); return; }
+      if (!last) return;
+      var p = pt(e); seg(last, p); last = p;
+    });
+    function endP(e) {
+      delete pts[e.pointerId];
+      if (Object.keys(pts).length < 2) pinch = null;
+      last = null; panS = null;
+    }
+    cv.addEventListener('pointerup', endP);
+    cv.addEventListener('pointercancel', endP);
+    wrap.addEventListener('wheel', function (e) {          // Ctrl/Cmd + lăn chuột = zoom
+      if (!(e.ctrlKey || e.metaKey)) return;
+      e.preventDefault();
+      setZoom(zoom * (e.deltaY < 0 ? 1.15 : 1 / 1.15), e.clientX, e.clientY);
+    }, { passive: false });
+
+    body.addEventListener('click', function (e) {
+      var sw = e.target.closest('.xw-sw'), tb2 = e.target.closest('[data-t]');
+      if (sw) {
+        color = sw.getAttribute('data-c'); eraser = false; rainbow = false; panMode = false; cv.style.cursor = '';
+        $$('.xw-sw', body).forEach(function (s) { s.classList.toggle('is-on', s === sw); });
+        $$('[data-t]', body).forEach(function (b) { b.classList.remove('is-on'); }); beep(600, .03);
+      } else if (tb2) {
+        var t = tb2.getAttribute('data-t');
+        if (t === 'rainbow') { rainbow = !rainbow; eraser = false; tb2.classList.toggle('is-on', rainbow); }
+        else if (t === 'eraser') { eraser = !eraser; tb2.classList.toggle('is-on', eraser); }
+        else if (t === 'hand') { panMode = !panMode; tb2.classList.toggle('is-on', panMode); cv.style.cursor = panMode ? 'grab' : ''; }
+        else if (t === 'zin') setZoom(zoom * 1.25);
+        else if (t === 'zout') setZoom(zoom / 1.25);
+        else if (t === 'zfit') { setZoom(1); wrap.scrollLeft = 0; wrap.scrollTop = 0; }
+        else if (t === 'clear') { g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); say('Canvas cleared'); }
+        else if (t === 'save') {
+          cv.toBlob(function (bl) {
+            if (!bl) return;
+            var a = document.createElement('a'); a.href = URL.createObjectURL(bl); a.download = 'my-drawing.png'; a.click();
+            setTimeout(function () { URL.revokeObjectURL(a.href); }, 1500);
+          });
+          say('Saved my-drawing.png'); chime();
+        }
+        beep(520, .04);
+      }
+    });
+  });
+}
 
   /* =====================================================
      10. START MENU + ICON DESKTOP MỚI (Notepad, Paint)
@@ -932,12 +995,18 @@
     var btn = el('button', 'xw-try', '\u25B6 TRY IT'), pane = el('div', 'xw-pane'), built = false;
     btn.type = 'button'; pane.hidden = true;
     canvas.appendChild(pane); canvas.appendChild(btn);
-    btn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      var open = pane.hidden; pane.hidden = !open; btn.textContent = open ? '\u25C0 INFO' : '\u25B6 TRY IT';
-      if (open && !built) { built = true; build(pane); }
-      beep(open ? 700 : 500, .05);
-    });
+   btn.addEventListener('click', function (e) {
+  e.stopPropagation();
+  var open = pane.hidden; pane.hidden = !open; btn.textContent = open ? '\u25C0 INFO' : '\u25B6 TRY IT';
+  canvas.scrollTop = 0;                       // pane nằm trong canvas, tránh bị cuộn lệch
+  if (open && !built) { built = true; build(pane); }
+  beep(open ? 700 : 500, .05);
+});
+/* SP: sau animation mở, tự bấm nút phóng to để cửa sổ chiếm cả màn hình máy tính */
+if (SP) setTimeout(function () {
+  var mx = $('[data-w="max"]', w);
+  if (mx && w.isConnected && !w.classList.contains('is-max')) mx.click();
+}, 750);
     if (firstWin) { firstWin = false; setTimeout(function () { clipSay('Hit TRY IT in the window. It\u2019s interactive!'); }, 900); }
   }
   /* mỗi khi about.js mở cửa sổ app mới -> nâng cấp nó */

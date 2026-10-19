@@ -1,5 +1,5 @@
 /* =========================================================
-   ABOUT-PC ADD-ON  (about-pc.css)
+   ABOUT-PC ADD-ON  đây là (about-pc.css)
    Nâng cấp máy tính cổ ở trang "My software".
    - CHỈ BỔ SUNG, không sửa about2.css / about.css / style.css.
    - Link SAU about2.css:  <link rel="stylesheet" href="about-pc.css">
@@ -215,8 +215,9 @@
 .pc .xw-tools button.xw-b{padding:1px 6px;border:2px outset #fff;background:#d4d0c8;font:10px Tahoma,Arial,sans-serif}
 .pc .xw-tools button.xw-b:active,.pc .xw-tools button.xw-b.is-on{border-style:inset;background:#bfbab0}
 .pc .xw-tools input[type=range]{width:60px;accent-color:#0a246a}
-.pc .xw-cvwrap{position:relative;flex:1;min-height:0;margin:4px;border:2px inset #fff;background:#fff}
-.pc .xw-cv{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair;touch-action:none}
+.pc .xw-cvwrap{position:relative;flex:1;min-height:0;margin:4px;border:2px inset #fff;background:#fff;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.pc .xw-cv{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;display:block;cursor:crosshair;touch-action:none}
+.pc .xw-zoomv{min-width:36px;text-align:center;font:10px/1 monospace;color:#222}
 
 
 /* =========================================================
@@ -332,27 +333,62 @@
 
 
 /* =========================================================
-   12. SP DỌC (<=820px + portrait): chạm dễ hơn, không bị tràn
+   12. PC to hơn một chút + SP: UI app gọn, cuộn được
    ========================================================= */
+.pc .xw-pane{
+  font-size:clamp(10px,4cqw,14px);
+  overflow-x:hidden;overflow-y:auto;touch-action:pan-y;
+  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+}
+.pc .xw-chat,.pc .xw-todo,.pc .xw-bin{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+
+/* ---- SP (dọc + ngang) ---- */
+@media (max-width:820px), (pointer:coarse) and (max-height:520px){
+  /* bỏ phần trang trí, nút cửa sổ dễ bấm */
+  .pc .win__menu,.pc .win__tools{display:none}
+  .pc .win__bar{height:26px}
+  .pc .win__btns button{width:22px;height:22px;aspect-ratio:auto;font-size:12px}
+  .pc .win__canvas{justify-content:flex-start;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  .pc .win.is-max .win__art{width:calc(var(--u)*4.4)}
+  .pc .win__status{font-size:9px}
+
+  /* mini-app nhỏ lại, ít phải cuộn */
+  .pc .xw-pane{padding:5px;gap:4px;font-size:clamp(9px,3.2cqw,12px)}
+  .pc .xw-cap{font-size:.85em;padding-right:52px}
+  .pc .xw-prev{max-height:30cqh}
+  .pc .xw-scope{height:16px}
+  .pc .xw-sl{grid-template-columns:4.6em 1fr 2.2em;gap:3px}
+  .pc .xw-sl input{height:16px;margin:0}
+  .pc .xw-row{gap:3px}
+  .pc .xw-row button,.pc .xw-pane button.xw-btn{padding:3px 6px}
+  .pc .xw-poster,.pc .xw-mon{max-height:26cqh}
+  .pc .xw-swatches button{height:20px}
+  .pc .xw-grid{gap:3px}
+  .pc .xw-th{aspect-ratio:3/2}
+  .pc .xw-tl{height:40px}
+  .pc .xw-try{padding:3px 8px;font-size:9px}
+  .pc .xw-spot{width:12%;margin:-6% 0 0 -6%}
+
+  /* Paint */
+  .pc .xw-tools{gap:3px;padding:3px}
+  .pc .xw-sw{width:18px;height:18px}
+  .pc .xw-tools button.xw-b{padding:3px 6px;font-size:9px}
+  .pc .xw-tools input[type=range]{width:50px}
+
+  /* chống iOS tự phóng to khi gõ */
+  .pc .xw-txt,.pc .xw-note{font-size:16px}
+}
+
+/* ---- SP dọc ---- */
 @media (max-width:820px) and (orientation:portrait){
-  /* menu chuột phải gọn hơn, tự cuộn nếu quá cao */
   .pc .xw-ctx{min-width:118px;max-height:96%;overflow-y:auto;font-size:10px}
   .pc .xw-ctx button{padding:5px 10px 5px 5px}
-
-  /* lịch + kẹp giấy */
   .pc .xw-cal{width:72%;right:3%}
   .pc .xw-clip{width:13%;right:12%}
   .pc .xw-clip__bub{max-width:120px}
-
-  /* vùng chạm lớn hơn */
   .pc .xw-tray{padding:0 7px}
-  .pc .xw-sw{width:22px;height:22px}
-  .pc .xw-tools button.xw-b{padding:4px 8px}
-  .pc .xw-row button,.pc .xw-pane button.xw-btn{padding:5px 9px}
-  .pc .xw-try{padding:4px 9px}
-  .pc .xw-spot{width:13%;margin:-6.5% 0 0 -6.5%}
-  .pc .xw-tl{height:46px}
+}
 
-  /* chống iOS tự phóng to khi gõ chữ */
-  .pc .xw-txt,.pc .xw-note{font-size:16px}
+@media (prefers-reduced-motion:reduce){
+  .pc .xw-clip,.pc .xw-clip__svg,.pc .xw-clip__eyes,.pc .xw-try,.pc .xw-deco::before,.pc .xw-rip{animation:none!important}
 }
