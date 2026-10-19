@@ -357,6 +357,14 @@ function glActive() { return useGL && !isMobile(); }
     GL.r.render(GL.scene, GL.cam);   // xoá canvas ngay trong cùng 1 task
   }
 
+  /** Báo "sổ đã sẵn sàng" (2 mặt đang hiện đã chụp xong). Chỉ chạy 1 lần. */
+function markBookReady() {
+  if (markBookReady.done) return;
+  markBookReady.done = true;
+  window.__bookReady = true;
+  document.dispatchEvent(new CustomEvent('book:ready'));
+}
+
   function prepareAll() {
     if (!glActive() || isMobile()) return;
     initGL();
@@ -371,7 +379,7 @@ function glActive() { return useGL && !isMobile(); }
      var nVis = visibleFaces().length;
   order.forEach(function (o, i) {
     var p = enqueue(function () { return capture(o.leaf, o.side); });
-    if (i === nVis - 1) p.then(markBookReady);     // xong 2 mặt đang hiện là mở sổ
+    if (i === nVis - 1) p.then(markBookReady);
   });
   enqueue(function () { leaves.forEach(warm); });
   }

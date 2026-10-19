@@ -348,6 +348,7 @@
           '<p class="win__tags">' + a.tags.map(function (t) { return '<i>' + esc(t) + '</i>'; }).join('') + '</p>' +
         '</div></div><div class="win__status">' + esc(a.use) + '</div>';
       layer.appendChild(el);
+        el.setAttribute('data-app', id);
       setIcon($('.win__img', el), a);
       setIcon($('.win__ico', el), a);
 
