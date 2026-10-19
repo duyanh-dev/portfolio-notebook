@@ -273,10 +273,33 @@
 .win.is-max .win__art{width:calc(var(--u)*8.4)}
 .spark{position:absolute;z-index:5;width:calc(var(--u)*.55);aspect-ratio:1;margin:calc(var(--u)*-.275) 0 0 calc(var(--u)*-.275);background:var(--wa);pointer-events:none}
 
-/* ---------- SP dọc: pc to vừa trang, không cần chỉnh thêm ---------- */
+/* =========================================================
+   SP DỌC: dùng lại khung NỬA CUỐN SỔ y hệt Overview (1 trang / lần)
+   ========================================================= */
 @media (max-width:820px) and (orientation:portrait){
-  .gear__field{inset:calc(var(--u)*2.2) calc(var(--u)*2.6)}
-  .apage .apage__inner.gear-page{min-height:inherit}
+  /* khung + sổ: giống .book-wrap / .book của Overview */
+  .about-wrap{
+    top:0;bottom:auto;height:var(--vh);
+    align-items:flex-start;justify-content:flex-start;
+    padding:var(--stage-t) 0 0;will-change:auto;
+  }
+  .abook{flex:none;margin-left:calc(var(--bw) * var(--win-l) * -1 + var(--shift))}
+  .abook .aspread{perspective:none}
+
+  /* mọi trang nằm đúng vị trí TRANG TRÁI, chỉ trang active hiện */
+  .aspread .apage{
+    left:-70px;right:auto;top:0;bottom:0;width:40.57%;
+    display:none;z-index:10;
+    border-radius:var(--pr) 0 0 var(--pr);
+    --hxx:calc(100% - var(--hx));
+    backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  }
+  .aspread .apage.is-m-active{display:block}
+
+  /* lề trong: chừa lỗ bấm bên phải, giống nhau cho cả 4 trang */
+  .aspread .apage .apage__inner:not(.gear-page){
+    padding:calc(var(--u)*3.2) calc(var(--u)*4.2) 0 calc(var(--u)*2.6);
+  }
 }
 
 @media (prefers-reduced-motion:reduce){

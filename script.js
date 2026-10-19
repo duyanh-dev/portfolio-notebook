@@ -444,6 +444,20 @@ function glActive() { return useGL && !isMobile(); }
     if (anyFlip() || GL.dirty) { GL.r.render(GL.scene, GL.cam); GL.dirty = false; }
   });
 
+    /* ---- export nhỏ để about.js dùng lại page-curl (không đổi logic cũ) ---- */
+  window.__curl = {
+    ok: function () { return glActive(); },
+    init: function () { initGL(); measure(); return G; },
+    G: function () { return G; },
+    dpr: function () { return DPR; },
+    snap: function (el, isLeft) { return snap(el, isLeft); },
+    flipper: function () { return makeFlipper(); },
+    pose: function (fl, p, dir) { poseMesh(fl, p, dir); },
+    enqueue: function (job) { return enqueue(job); },
+    quiet: function (ms) { quietUntil = performance.now() + ms; },
+    dur: function () { return CURL.dur; }
+  };
+
   /* ---- điều khiển lật ---- */
   function applyZ() {
     leaves.forEach(function (l, i) {

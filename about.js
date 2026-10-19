@@ -526,13 +526,36 @@
     gsap.fromTo($('.pc', pageR), { y: 36, autoAlpha: 0, scale: .94 }, { y: 0, autoAlpha: 1, scale: 1, duration: .8, delay: .2, ease: 'power3.out', clearProps: 'transform,opacity,visibility' });
     gsap.fromTo($$('.dico', pageR), { scale: 0, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: .45, delay: .6, ease: 'back.out(2.6)', stagger: .07, clearProps: 'transform,opacity,visibility' });
   }
+
+    function prepGear() {
+    if (!hasGsap) return;
+    gsap.set($$('.gear', pageL), { y: -50, autoAlpha: 0, scale: .6 });
+    gsap.set($('.gear__title', pageL), { autoAlpha: 0 });
+    gsap.set($('.g-line path', pageL), { strokeDashoffset: 300 });
+  }
+  function prepSW() {
+    if (!hasGsap) return;
+    gsap.set([$('.sw-title', pageR), $('.pc', pageR)], { autoAlpha: 0 });
+    gsap.set($$('.dico', pageR), { autoAlpha: 0, scale: 0 });
+  }
+
   function intro() { introGear(); introSW(); }
 
-  /* =====================================================
-     LẬT GIỮA SPREAD 1 <-> 2 (PC / SP ngang)
+   /* =====================================================
+     LẬT GIỮA SPREAD 1 <-> 2  (PC / SP ngang)
+     - Ưu tiên PAGE-CURL 3D: dùng lại hàm của script.js qua window.__curl
+     - Chưa sẵn sàng / không có WebGL: lật CSS 2 pha như cũ
      ===================================================== */
   if (!portrait && sp2) {
     var cur = 1, busy = false;
+    var p1R = $('.apage--r', sp1);   // mặt TRƯỚC của lá giấy (trang phải About)
+    var p2L = $('.apage--l', sp2);   // mặt SAU của lá giấy (trang trái What I use)
+    var C = window.__curl, MARGIN = 60;
+    var curlOK = !!(C && window.THREE && hasGsap && C.ok());
+    var cv = null, rd = null, scene3 = null, cam3 = null, fl = null, warmed = false;
+    var texFront = false, texBack = false, dirtyBack = false, capTimer = null;
+
+    /* ---------- mũi tên ---------- */
     function mkArrow(cls, label, d) {
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'arrow ' + cls + ' a-arrow'; b.setAttribute('aria-label', label);
@@ -548,13 +571,112 @@
     function showSpread(n) { cur = n; if (n === 1) { show(sp1); hide(sp2); } else { hide(sp1); show(sp2); } setArrows(); }
     setArrows();
 
-    function flip(n) {
-      if (busy || n === cur) return;
+    /* ---------- renderer 3D riêng cho About (canvas đặt trong sp2 để nằm TRÊN cả 2 spread) ---------- */
+    function fitCurl() {
+      var G = C.init();                                  // đo lại kích thước (giống sổ chính)
+      var CW = G.SW + MARGIN * 2, CH = G.SH + MARGIN * 2;
+      cv.style.left = -MARGIN + 'px'; cv.style.top = -MARGIN + 'px';
+      cv.style.width = CW + 'px'; cv.style.height = CH + 'px';
+      rd.setSize(CW, CH, false);
+      cam3.aspect = CW / CH;
+      var d = (CH / 2) / Math.tan(THREE.MathUtils.degToRad(cam3.fov / 2));
+      cam3.position.set(0, 0, d); cam3.far = d * 4;
+      cam3.updateProjectionMatrix();
+    }
+    function initCurl() {
+      if (rd) return true;
+      if (!curlOK) return false;
+      try {
+        C.init();
+        cv = document.createElement('canvas');
+        cv.className = 'flip-canvas';
+        cv.setAttribute('aria-hidden', 'true');
+        sp2.appendChild(cv);
+        rd = new THREE.WebGLRenderer({ canvas: cv, alpha: true, antialias: C.dpr() < 1.5, powerPreference: 'high-performance' });
+        rd.setClearColor(0x000000, 0);
+        rd.outputEncoding = THREE.sRGBEncoding;
+        rd.setPixelRatio(C.dpr());
+        scene3 = new THREE.Scene();
+        cam3 = new THREE.PerspectiveCamera(26, 1, 10, 10000);
+        scene3.add(new THREE.AmbientLight(0xffffff, 0.74));
+        var dl = new THREE.DirectionalLight(0xffffff, 0.35);
+        dl.position.set(-0.25, 0.5, 0.83);
+        scene3.add(dl);
+        fl = C.flipper();                                // tờ giấy 3D của script.js
+        scene3.add(fl.group);                            // chuyển sang scene của About
+        fitCurl();
+        return true;
+      } catch (e) { curlOK = false; rd = null; return false; }
+    }
+    function render() { rd.render(scene3, cam3); }
+
+    function setTex(side, tex) {
+      var m = side === 'front' ? fl.mF : fl.mB;
+      if (m.material.map) m.material.map.dispose();
+      m.material.map = tex; m.material.needsUpdate = true;
+      if (rd.initTexture) rd.initTexture(tex);           // đẩy lên GPU ngay
+    }
+    function warm() {                                    // biên dịch shader trước, tránh giật lần lật đầu
+      fl.group.visible = true; C.pose(fl, .5, 1); render();
+      fl.group.visible = false; render();
+    }
+    function capture(side) {
+      var el = side === 'front' ? p1R : p2L;
+      return C.enqueue(function () {
+        return C.snap(el, side === 'back').then(function (tex) {
+          setTex(side, tex);
+          if (side === 'front') texFront = true; else texBack = true;
+          if (texFront && texBack && !warmed) { warmed = true; warm(); }
+        });
+      });
+    }
+    function prepareCurl(force) {
+      if (!initCurl()) return;
+      if (force) { texFront = texBack = false; dirtyBack = true; }
+      if (!texFront) capture('front');
+      if (!texBack || dirtyBack) { dirtyBack = false; capture('back'); }
+    }
+
+    /* ---------- trang phải (máy tính) ẩn sẵn để hiện ra khi lá giấy nhấc lên ---------- */
+    function prepSW() {
+      gsap.set([$('.sw-title', pageR), $('.pc', pageR)], { autoAlpha: 0 });
+      gsap.set($$('.dico', pageR), { autoAlpha: 0, scale: 0 });
+    }
+
+    /* ---------- lật bằng PAGE-CURL 3D ---------- */
+    function curlFlip(n) {
+      var dir = n > cur ? 1 : -1, o = { p: dir > 0 ? 0 : 1 }, dur = C.dur();
+      busy = true;
+      C.quiet(dur * 1000 + 1500);                        // không chụp trang trong lúc lật
+      beep(380, .12, 'triangle', .04);
+
+      if (dir > 0) { prepSW(); show(sp2); } else { show(sp1); }
+      p1R.style.visibility = 'hidden';                   // lá giấy 3D thay thế 2 trang thật này
+      p2L.style.visibility = 'hidden';
+
+      fl.group.visible = true; C.pose(fl, o.p, dir); render();
+      if (dir > 0) gsap.delayedCall(dur * .6, introSW);  // máy tính bung ra khi lá giấy nhấc lên
+
+      gsap.to(o, {
+        p: dir > 0 ? 1 : 0, duration: dur, ease: 'power2.inOut',
+        onUpdate: function () { C.pose(fl, o.p, dir); render(); },
+        onComplete: function () {
+          fl.group.visible = false; render();            // xoá canvas
+          if (dir > 0) hide(sp1); else hide(sp2);
+          p1R.style.visibility = ''; p2L.style.visibility = '';
+          cur = n; busy = false; setArrows();
+        }
+      });
+    }
+
+    /* ---------- lật CSS 2 pha (dự phòng) ---------- */
+    function cssFlip(n) {
       if (!hasGsap) { showSpread(n); if (n === 2) intro(); return; }
       busy = true;
+      if (C) C.quiet(2500);
       var dir = n > cur ? 1 : -1, from = cur === 1 ? sp1 : sp2, to = n === 1 ? sp1 : sp2;
-      var mv = $(dir > 0 ? '.apage--r' : '.apage--l', from);     // trang đang lật
-      var land = $(dir > 0 ? '.apage--l' : '.apage--r', to);      // trang hạ cánh
+      var mv = $(dir > 0 ? '.apage--r' : '.apage--l', from);
+      var land = $(dir > 0 ? '.apage--l' : '.apage--r', to);
       beep(380, .12, 'triangle', .04);
 
       from.style.zIndex = 3; to.style.zIndex = 2;
@@ -580,6 +702,14 @@
         }
       });
     }
+
+    function flip(n) {
+      if (busy || n === cur) return;
+      if (curlOK && rd && texFront && texBack && !dirtyBack) { curlFlip(n); return; }
+      cssFlip(n);                                        // chưa có texture: lật CSS luôn, không chờ
+      prepareCurl();                                     // và chụp sẵn cho lần sau
+    }
+
     next.addEventListener('click', function () { flip(2); });
     prev.addEventListener('click', function () { flip(1); });
     document.addEventListener('keydown', function (e) {
@@ -589,24 +719,106 @@
       if (e.key === 'ArrowLeft') flip(1);
     });
 
-    /* mỗi lần vào lại About thì quay về spread 1 */
+    /* người dùng sắp xếp lại đồ nghề -> chụp lại mặt sau lá giấy sau 1.2s */
+    ['click', 'pointerup'].forEach(function (ev) {
+      pageL.addEventListener(ev, function () {
+        if (!curlOK) return;
+        dirtyBack = true;
+        clearTimeout(capTimer);
+        capTimer = setTimeout(function () { prepareCurl(); }, 1200);
+      });
+    });
+
+    /* đổi kích thước: đo lại + chụp lại */
+    var rt;
+    window.addEventListener('resize', function () {
+      clearTimeout(rt);
+      rt = setTimeout(function () {
+        if (!rd) return;
+        fitCurl();
+        if (body.classList.contains('view-about')) prepareCurl(true);
+        else { texFront = texBack = false; dirtyBack = true; }
+      }, 600);
+    });
+
+    /* vào About: quay về spread 1 + chụp sẵn 2 mặt sau khi animation vào đã yên */
     var was = body.classList.contains('view-about');
+    if (was) setTimeout(function () { prepareCurl(); }, 1800);
     new MutationObserver(function () {
       var now = body.classList.contains('view-about');
-      if (now && !was && cur !== 1 && !busy) showSpread(1);
+      if (now && !was) {
+        if (cur !== 1 && !busy) showSpread(1);
+        setTimeout(function () { prepareCurl(); }, 1800);
+      }
       was = now;
     }).observe(body, { attributes: true, attributeFilter: ['class'] });
   }
 
-  /* SP dọc: animation chạy khi cuộn tới từng trang */
-  if (portrait && 'IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        io.unobserve(e.target);
-        if (e.target === pageL) introGear(); else introSW();
+  /* =====================================================
+     SP DỌC: giao diện NỬA CUỐN SỔ như Overview
+     4 trang, mỗi lần hiện 1 trang, lật rotationY + 2 mũi tên dưới
+     ===================================================== */
+  if (portrait) {
+    var mPages = $$('.apage', sp1);     // [About trái, About phải, What I use, My software]
+    var mCur = 0, mTween = null;
+
+    var pager = document.createElement('div');
+    pager.className = 'pager apager';
+    pager.innerHTML =
+      '<button type="button" class="apager__prev" aria-label="Previous page"><svg viewBox="0 0 120 60" aria-hidden="true"><path d="M114 32 C86 26 58 28 20 30 M40 10 C28 18 16 24 6 30 C18 38 30 46 42 54"/></svg></button>' +
+      '<a class="credit" href="https://duyanh.dev" target="_blank" rel="noopener">demo by <b>duyanh.dev</b></a>' +
+      '<button type="button" class="apager__next" aria-label="Next page"><svg viewBox="0 0 120 60" aria-hidden="true"><path d="M6 32 C34 26 62 28 100 30 M80 10 C92 18 104 24 114 30 C102 38 90 46 78 54"/></svg></button>';
+    $('#aboutWrap').appendChild(pager);
+    var mPrev = $('.apager__prev', pager), mNext = $('.apager__next', pager);
+
+    function mUpdate() {
+      mPrev.disabled = mCur === 0;
+      mNext.disabled = mCur === mPages.length - 1;
+    }
+    function mFinish(p) {
+      mPages.forEach(function (el, i) {
+        el.classList.toggle('is-m-active', i === p);
+        if (hasGsap) gsap.set(el, { clearProps: 'transform,zIndex,transformOrigin,transformPerspective' });
       });
-    }, { threshold: .25 });
-    io.observe(pageL); io.observe(pageR);
+    }
+    /* trang đồ nghề / máy tính ẩn sẵn rồi bung ra khi trang đang lật */
+    function pre(p) {
+      if (!hasGsap) return;
+      if (p === 2) { prepGear(); gsap.delayedCall(.45, introGear); }
+      else if (p === 3) { prepSW(); gsap.delayedCall(.45, introSW); }
+    }
+    function mGo(p, instant) {
+      p = clamp(p, 0, mPages.length - 1);
+      if (mTween) mTween.progress(1);
+      var old = mCur;
+      if (p === old) return;
+      var dir = p > old ? 1 : -1;
+      mCur = p;
+      if (instant || !hasGsap) { mFinish(p); mUpdate(); return; }
+
+      var a = mPages[old], b = mPages[p], mover = dir > 0 ? a : b;
+      beep(380, .12, 'triangle', .04);
+      pre(p);
+      a.classList.add('is-m-active'); b.classList.add('is-m-active');
+      gsap.set(dir > 0 ? b : a, { zIndex: 10 });
+      gsap.set(mover, { zIndex: 15, transformOrigin: '100% 50%', transformPerspective: 1200, rotationY: dir > 0 ? 0 : 180 });
+      mTween = gsap.to(mover, {
+        rotationY: dir > 0 ? 180 : 0, duration: .85, ease: 'power2.inOut',
+        onComplete: function () { mTween = null; mFinish(p); }
+      });
+      mUpdate();
+    }
+
+    mPrev.addEventListener('click', function () { mGo(mCur - 1); });
+    mNext.addEventListener('click', function () { mGo(mCur + 1); });
+    mFinish(0); mUpdate();
+
+    /* mỗi lần vào lại About thì về trang đầu */
+    var wasM = body.classList.contains('view-about');
+    new MutationObserver(function () {
+      var now = body.classList.contains('view-about');
+      if (now && !wasM && mCur !== 0) mGo(0, true);
+      wasM = now;
+    }).observe(body, { attributes: true, attributeFilter: ['class'] });
   }
 })();
